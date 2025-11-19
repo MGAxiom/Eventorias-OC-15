@@ -13,6 +13,7 @@ googleServices = "4.4.4"
 firebaseAuth = "23.2.1"
 firebaseUiAuth = "9.1.1"
 firebaseAnalytics = "22.5.0"
+appcompat = "1.7.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,6 +34,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx", version.ref = "firebaseAnalytics" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuth" }
 firebase-ui-auth = { group = "com.firebaseui", name = "firebase-ui-auth", version.ref = "firebaseUiAuth" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 
 [plugins]

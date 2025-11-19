@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="24dp"
+    android:background="@color/eventorias_dark_background">
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo_eventorias_app_android"
+        android:adjustViewBounds="true"
+        android:layout_marginTop="100dp"
+        android:contentDescription="@string/eventorias" />
+
+    <ImageView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/eventorias_app_title"
+        android:adjustViewBounds="true"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="64dp"
+        android:contentDescription="@string/eventorias" />
+
+    <Button
+        android:id="@+id/google_button"
+        android:layout_width="200dp"
+        android:layout_height="52dp"
+        android:text="@string/sign_in_with_google"
+        android:background="@drawable/bg_rounded_4dp"
+        android:textAllCaps="false"
+        android:textColor="@android:color/black"
+        android:drawableStart="@drawable/auth_google_icon"
+
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/email_button"
+        android:layout_width="200dp"
+        android:layout_height="52dp"
+        android:background="@drawable/bg_rounded_4dp"
+        android:backgroundTint="@color/eventorias_red"
+        android:drawableStart="@drawable/auth_email_icon"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:text="@string/sign_in_with_email"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>

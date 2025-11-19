@@ -8,24 +8,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
+import androidx.appcompat.R as AppCompatR
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.eventorias.ui.screens.EventListScreen
 import com.example.eventorias.ui.theme.EventoriasTheme
+import com.firebase.ui.auth.AuthMethodPickerLayout
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
@@ -65,35 +62,25 @@ fun AuthScreen(modifier: Modifier = Modifier) {
         LaunchedEffect(Unit) {
             val providers = arrayListOf(
                 AuthUI.IdpConfig.EmailBuilder().build(),
-                AuthUI.IdpConfig.PhoneBuilder().build(),
                 AuthUI.IdpConfig.GoogleBuilder().build()
             )
+
+            // Configuration du layout personnalisé
+            val customLayout = AuthMethodPickerLayout
+                .Builder(R.layout.auth_method_picker)
+                .setGoogleButtonId(R.id.google_button)
+                .setEmailButtonId(R.id.email_button)
+                .build()
 
             val signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setTheme(com.firebase.ui.auth.R.style.FirebaseUI_DayNight)
+                .setAuthMethodPickerLayout(customLayout) // Application du layout
+                .setTheme(AppCompatR.style.Theme_AppCompat_DayNight_NoActionBar)
                 .build()
             signInLauncher.launch(signInIntent)
         }
     } else {
-        // This is where you would show your main app content
-        Greeting(name = user.value?.displayName ?: "User", modifier = modifier)
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    EventoriasTheme {
-        Greeting("Android")
+        EventListScreen()
     }
 }
