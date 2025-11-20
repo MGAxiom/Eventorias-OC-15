@@ -8,7 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.R as AppCompatR
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -65,8 +64,7 @@ fun AuthScreen(modifier: Modifier = Modifier) {
                 AuthUI.IdpConfig.GoogleBuilder().build()
             )
 
-            // Configuration du layout personnalisé
-            val customLayout = AuthMethodPickerLayout
+            val customAuthLayout = AuthMethodPickerLayout
                 .Builder(R.layout.auth_method_picker)
                 .setGoogleButtonId(R.id.google_button)
                 .setEmailButtonId(R.id.email_button)
@@ -75,12 +73,12 @@ fun AuthScreen(modifier: Modifier = Modifier) {
             val signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
-                .setAuthMethodPickerLayout(customLayout) // Application du layout
-                .setTheme(AppCompatR.style.Theme_AppCompat_DayNight_NoActionBar)
+                .setAuthMethodPickerLayout(customAuthLayout)
+                .setTheme(R.style.Theme_Eventorias_Auth)
                 .build()
             signInLauncher.launch(signInIntent)
         }
     } else {
-        EventListScreen()
+        EventListScreen(modifier)
     }
 }

@@ -9,16 +9,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun EventListScreen() {
-    TopBar()
+fun EventListScreen(modifier: Modifier) {
+    TopBar(modifier)
 }
 
 @Composable
-private fun TopBar() {
-    Row {
+private fun TopBar(
+    modifier: Modifier = Modifier
+) {
+    Row(modifier) {
         Text(
             text = "Event List",
             style = MaterialTheme.typography.headlineMedium
@@ -45,5 +48,7 @@ private fun TopBar() {
 @Preview(showBackground = true)
 @Composable
 private fun EventListScreenPreview() {
-    EventListScreen()
+    EventListScreen(
+        modifier = Modifier
+    )
 }
