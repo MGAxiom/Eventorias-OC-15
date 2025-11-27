@@ -1,4 +1,3 @@
-
 package com.example.eventorias
 
 import android.app.Activity
@@ -17,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.example.eventorias.model.Evento
 import com.example.eventorias.ui.screens.EventListScreen
 import com.example.eventorias.ui.theme.EventoriasTheme
 import com.firebase.ui.auth.AuthMethodPickerLayout
@@ -73,12 +73,27 @@ fun AuthScreen(modifier: Modifier = Modifier) {
             val signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
+                .setTheme(R.style.LoginTheme)
                 .setAuthMethodPickerLayout(customAuthLayout)
-                .setTheme(R.style.Theme_Eventorias_Auth)
                 .build()
             signInLauncher.launch(signInIntent)
         }
     } else {
-        EventListScreen(modifier)
+        EventListScreen(
+            modifier,
+            events = List(10) { index ->
+                Evento(
+                    name = "Evento ${index + 1}",
+                    date = java.util.Date(System.currentTimeMillis()),
+                    id = "$index",
+                    attachedUser = com.example.eventorias.model.User(
+                        name = "User ${index + 1}",
+                        id = index.toLong(),
+                        profilePicture = "image",
+                    )
+                )
+            },
+            onAddEventClick = {}
+        )
     }
 }

@@ -3,10 +3,35 @@
 
     <style name="Theme.Eventorias" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <style name="Theme.Eventorias.Auth" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <!-- Appliquer la couleur de fond à la barre de statut -->
+    <!-- Thème pour l'authentification (FirebaseUI) -->
+    <style name="Theme.Eventorias.Auth" parent="Theme.AppCompat.Light.NoActionBar"/>
+
+    <style name="LoginTheme" parent="FirebaseUI">
+        <!-- Background colors -->
         <item name="android:statusBarColor">@color/eventorias_dark_background</item>
-        <!-- Appliquer la couleur de fond à toute la fenêtre -->
         <item name="android:windowBackground">@color/eventorias_dark_background</item>
+        <item name="colorPrimaryDark">@color/eventorias_dark_background</item>
+
+        <!-- Text colors - WHITE for dark background -->
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:textColorHintInverse">#808080</item>
+
+        <!-- Button colors -->
+        <item name="colorPrimary">@color/eventorias_red</item>
+        <item name="colorPrimaryVariant">@color/eventorias_red</item>
+        <item name="colorAccent">@color/purple_200</item>
+        <item name="colorButtonNormal">@color/eventorias_red</item>
+
+        <!-- Text field styling -->
+        <item name="colorControlNormal">#666666</item>
+        <item name="colorControlActivated">@color/purple_200</item>
+        <item name="colorControlHighlight">@color/purple_200</item>
+
+        <!-- Window settings -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
+
 </resources>
