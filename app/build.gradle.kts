@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.ui.auth)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.navigation.compose)
 
     //Tests
     testImplementation(libs.junit)

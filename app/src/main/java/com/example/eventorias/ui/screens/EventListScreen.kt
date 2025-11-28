@@ -1,6 +1,7 @@
 package com.example.eventorias.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,7 +42,8 @@ import com.example.eventorias.ui.components.EventListItem
 fun EventListScreen(
     modifier: Modifier,
     events: List<Evento>,
-    onAddEventClick: () -> Unit
+    onAddEventClick: () -> Unit,
+    onEventClick: (String) -> Unit
 ) {
     Scaffold(
         modifier = modifier,
@@ -67,7 +69,7 @@ fun EventListScreen(
             TopBar(Modifier.padding(bottom = TOP_BAR_BOTTOM_PADDING.dp))
             when (events.isEmpty()) {
                 false -> {
-                    EventList(events)
+                    EventList(events, onEventClick)
                 }
                 true -> {
                     ErrorState()
@@ -121,12 +123,16 @@ private fun TopBar(
 @Composable
 private fun EventList(
     events: List<Evento>,
+    onEventClick: (String) -> Unit
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(LIST_SPACING.dp)
     ) {
         items(events) {
-            EventListItem(event = it)
+            EventListItem(
+                event = it,
+                modifier = Modifier.clickable { onEventClick(it.id) }
+            )
         }
     }
 }
@@ -190,7 +196,8 @@ private fun EventListScreenPreview() {
                 )
             )
         },
-        onAddEventClick = {}
+        onAddEventClick = {},
+        onEventClick = {}
     )
 }
 
@@ -203,7 +210,8 @@ private fun EmptyEventListScreenPreview() {
     EventListScreen(
         modifier = Modifier,
         events = emptyList(),
-        onAddEventClick = {}
+        onAddEventClick = {},
+        onEventClick = {}
     )
 }
 
