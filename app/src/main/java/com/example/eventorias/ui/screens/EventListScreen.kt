@@ -16,17 +16,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -42,45 +39,25 @@ import com.example.eventorias.ui.components.EventListItem
 fun EventListScreen(
     modifier: Modifier,
     events: List<Evento>,
-    onAddEventClick: () -> Unit,
     onEventClick: (String) -> Unit
 ) {
-    Scaffold(
-        modifier = modifier,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onAddEventClick,
-                containerColor = Color.Red,
-                contentColor = Color.White,
-                shape = RoundedCornerShape(FAB_CORNER_RADIUS.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add"
-                )
+    Column(
+        modifier = modifier.fillMaxSize()
+    ) {
+        TopBar(Modifier.padding(bottom = TOP_BAR_BOTTOM_PADDING.dp))
+        when (events.isEmpty()) {
+            false -> {
+                EventList(events, onEventClick)
             }
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            TopBar(Modifier.padding(bottom = TOP_BAR_BOTTOM_PADDING.dp))
-            when (events.isEmpty()) {
-                false -> {
-                    EventList(events, onEventClick)
-                }
-                true -> {
-                    ErrorState()
-                }
-                else -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
+            true -> {
+                ErrorState()
+            }
+            else -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
         }
@@ -196,7 +173,6 @@ private fun EventListScreenPreview() {
                 )
             )
         },
-        onAddEventClick = {},
         onEventClick = {}
     )
 }
@@ -210,12 +186,10 @@ private fun EmptyEventListScreenPreview() {
     EventListScreen(
         modifier = Modifier,
         events = emptyList(),
-        onAddEventClick = {},
         onEventClick = {}
     )
 }
 
-const val FAB_CORNER_RADIUS = 16
 const val TOP_BAR_BOTTOM_PADDING = 12
 const val LIST_SPACING = 8
 const val ERROR_ICON_PADDING = 16

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
@@ -20,11 +19,17 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.eventorias.R
 import com.example.eventorias.ui.components.LabeledValueField
 
 @Composable
@@ -32,6 +37,12 @@ fun EventCreationScreen(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {}
 ) {
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var date by remember { mutableStateOf("") }
+    var time by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -39,7 +50,18 @@ fun EventCreationScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             EventCreationHeader(onBack)
-            EventCreationBody()
+            EventCreationBody(
+                title = title,
+                onTitleChange = { title = it },
+                description = description,
+                onDescriptionChange = { description = it },
+                date = date,
+                onDateChange = { date = it },
+                time = time,
+                onTimeChange = { time = it },
+                address = address,
+                onAddressChange = { address = it }
+            )
             EventCreationButtons(onCancel = onBack)
         }
         TextButton(
@@ -83,19 +105,34 @@ private fun EventCreationHeader(onBack: () -> Unit) {
 }
 
 @Composable
-private fun EventCreationBody() {
+private fun EventCreationBody(
+    title: String,
+    onTitleChange: (String) -> Unit,
+    description: String,
+    onDescriptionChange: (String) -> Unit,
+    date: String,
+    onDateChange: (String) -> Unit,
+    time: String,
+    onTimeChange: (String) -> Unit,
+    address: String,
+    onAddressChange: (String) -> Unit
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
         LabeledValueField(
             label = "Title",
-            value = "New event",
+            value = title,
+            onValueChange = onTitleChange,
+            placeholder = "New event",
             modifier = Modifier.fillMaxWidth()
         )
         LabeledValueField(
             label = "Description",
-            value = "Tap here to enter your description",
+            value = description,
+            onValueChange = onDescriptionChange,
+            placeholder = "Tap here to enter your description",
             modifier = Modifier.fillMaxWidth()
         )
         Row(
@@ -105,18 +142,24 @@ private fun EventCreationBody() {
         ) {
             LabeledValueField(
                 label = "Date",
-                value = "MM/DD/YYYY",
+                value = date,
+                onValueChange = onDateChange,
+                placeholder = "MM/DD/YYYY",
                 modifier = Modifier.weight(1f)
             )
             LabeledValueField(
                 label = "Time",
-                value = "HH : MM",
+                value = time,
+                onValueChange = onTimeChange,
+                placeholder = "HH : MM",
                 modifier = Modifier.weight(1f)
             )
         }
         LabeledValueField(
             label = "Address",
-            value = "Enter full adress",
+            value = address,
+            onValueChange = onAddressChange,
+            placeholder = "Enter full adress",
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -145,8 +188,8 @@ private fun EventCreationButtons(onCancel: () -> Unit) {
             modifier = Modifier.size(54.dp)
         ) {
             Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Cancel",
+                painter = painterResource(id = R.drawable.icon_buton_photo),
+                contentDescription = "Add Photo",
             )
         }
         Button(
@@ -162,8 +205,8 @@ private fun EventCreationButtons(onCancel: () -> Unit) {
             modifier = Modifier.size(54.dp)
         ) {
             Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add",
+                painter = painterResource(id = R.drawable.attach_file_icon),
+                contentDescription = "Add file",
             )
         }
     }

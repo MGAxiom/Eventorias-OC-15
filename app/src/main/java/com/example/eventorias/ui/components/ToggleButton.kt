@@ -9,35 +9,41 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun RedToggle(
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
 ) {
-    val backgroundColor = if (checked) Color(0xFFE60012) else Color(0xFFBFBFBF)
-    val alignment = if (checked) Alignment.CenterEnd else Alignment.CenterStart
+    var checked by remember { mutableStateOf(true) }
 
-    Box(
-        modifier = Modifier
-            .width(48.dp)
-            .height(28.dp)
-            .clip(RoundedCornerShape(50))
-            .background(backgroundColor)
-            .clickable { onCheckedChange(!checked) }
-            .padding(4.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(20.dp)
-                .align(alignment)
-                .background(Color.White, shape = CircleShape)
+    Switch(
+        checked = checked,
+        onCheckedChange = {
+            checked = it
+        },
+        colors = SwitchDefaults.colors(
+            checkedThumbColor = Color.White,
+            checkedTrackColor = Color(0xFFE60012),
+            uncheckedThumbColor = Color.White,
+            uncheckedTrackColor = Color(0xFFBFBFBF),
         )
-    }
+    )
+}
+
+@Preview
+@Composable
+fun RedTooglePreview() {
+    RedToggle()
 }

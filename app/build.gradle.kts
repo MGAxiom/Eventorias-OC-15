@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.android)
 
     //Tests
     testImplementation(libs.junit)

@@ -2,9 +2,12 @@ package com.example.eventorias.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -17,6 +20,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.example.eventorias.model.Evento
 import java.util.Date
 
@@ -45,6 +50,21 @@ fun MainScreen(
                     label = { Text("Profile") }
                 )
             }
+        },
+        floatingActionButton = {
+            if (selectedTab == MainTab.Events) {
+                FloatingActionButton(
+                    onClick = onNavigateToEventCreation,
+                    containerColor = Color.Red,
+                    contentColor = Color.White,
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add"
+                    )
+                }
+            }
         }
     ) { innerPadding ->
         val modifier = Modifier.padding(innerPadding)
@@ -65,7 +85,6 @@ fun MainScreen(
                 EventListScreen(
                     modifier = modifier,
                     events = sampleEvents,
-                    onAddEventClick = onNavigateToEventCreation,
                     onEventClick = onNavigateToEventDetails
                 )
             }

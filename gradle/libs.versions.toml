@@ -16,6 +16,7 @@ firebaseAnalytics = "22.5.0"
 appcompat = "1.7.1"
 ui = "1.9.5"
 navigationCompose = "2.9.6"
+koin = "4.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,6 +40,8 @@ firebase-ui-auth = { group = "com.firebaseui", name = "firebase-ui-auth", versio
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 
 
 [plugins]
