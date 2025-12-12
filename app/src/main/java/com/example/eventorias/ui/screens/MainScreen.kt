@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.eventorias.model.Evento
+import com.example.eventorias.ui.components.EventTopBar
 import java.util.Date
 
 @Composable
@@ -33,6 +34,11 @@ fun MainScreen(
     var selectedTab by remember { mutableStateOf(MainTab.Events) }
 
     Scaffold(
+        topBar = {
+            if (selectedTab == MainTab.Events) {
+                EventTopBar(Modifier.padding(bottom = TOP_BAR_BOTTOM_PADDING.dp))
+            }
+        },
         bottomBar = {
             NavigationBar(
                 containerColor = MaterialTheme.colorScheme.background

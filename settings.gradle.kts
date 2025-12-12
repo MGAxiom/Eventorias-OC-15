@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Eventorias"
 include(":app")
+include(":network")
+include(":core")

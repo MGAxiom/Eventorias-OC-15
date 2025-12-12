@@ -44,7 +44,6 @@ fun EventListScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        TopBar(Modifier.padding(bottom = TOP_BAR_BOTTOM_PADDING.dp))
         when (events.isEmpty()) {
             false -> {
                 EventList(events, onEventClick)
@@ -60,39 +59,6 @@ fun EventListScreen(
                     CircularProgressIndicator()
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun TopBar(
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Event List",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.align(Alignment.CenterVertically)
-        )
-        Spacer(Modifier.weight(1f))
-        IconButton(
-            onClick = { /* Handle search icon click */ }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search"
-            )
-        }
-        IconButton(
-            onClick = { /* Handle filter icon click */ }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Menu,
-                contentDescription = "Filter"
-            )
         }
     }
 }

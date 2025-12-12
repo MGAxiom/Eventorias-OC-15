@@ -1,4 +1,4 @@
-package com.example.eventorias.ui.components
+package com.example.eventorias.core.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,12 +20,12 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LabeledValueField(
+    modifier: Modifier = Modifier,
     label: String,
     value: String,
     placeholder: String = "",
     onValueChange: (String) -> Unit = {},
-    readOnly: Boolean = false,
-    modifier: Modifier = Modifier
+    readOnly: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -72,7 +72,7 @@ fun LabeledValueField(
 
 @Preview
 @Composable
-fun LabeledTextFieldPreview() {
+private fun LabeledTextFieldPreview() {
     LabeledValueField(
         label = "Name",
         value = "",
