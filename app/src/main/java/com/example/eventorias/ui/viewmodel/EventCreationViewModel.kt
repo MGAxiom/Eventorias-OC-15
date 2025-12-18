@@ -1,4 +1,6 @@
 package com.example.eventorias.ui.viewmodel
 
-class EventCreationViewModel {
+import androidx.lifecycle.ViewModel
+
+class EventCreationViewModel : ViewModel() {
 }

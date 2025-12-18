@@ -32,8 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavKey
 import com.example.eventorias.model.Evento
 import com.example.eventorias.ui.components.EventListItem
+import kotlinx.serialization.Serializable
 
 @Composable
 fun EventListScreen(

@@ -33,7 +33,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation3.runtime.NavKey
+import coil.compose.AsyncImage
 import com.example.eventorias.R
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object EventDetailsScreen : NavKey
 
 data class EventDetailsUiState(
     val title: String,
@@ -42,7 +48,7 @@ data class EventDetailsUiState(
     val date: String,
     val time: String,
     val imageUrl: Int,
-    val mapImageUrl: Int,
+    val mapImageUrl: String,
     val authorImageUrl: Int
 )
 
@@ -108,8 +114,8 @@ fun EventDetailsScreen(
                 )
             )
 
-            Image(
-                painter = painterResource(id = uiState.mapImageUrl),
+            AsyncImage(
+                model = uiState.mapImageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -213,7 +219,7 @@ fun EventDetailsPreview() {
         date = "July 20, 2024",
         time = "10:00 AM",
         imageUrl = R.drawable.ic_launcher_background,
-        mapImageUrl = R.drawable.ic_launcher_background,
+        mapImageUrl = "https://maps.googleapis.com/maps/api/staticmap?center=48.8566,2.3522&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C48.8566,2.3522",
         authorImageUrl = R.drawable.auth_google_icon
     )
     EventDetailsScreen(uiState = sampleState)

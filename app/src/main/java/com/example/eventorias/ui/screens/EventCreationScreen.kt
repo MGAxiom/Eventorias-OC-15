@@ -29,8 +29,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavKey
 import com.example.eventorias.R
 import com.example.eventorias.core.components.LabeledValueField
+import kotlinx.serialization.Serializable
+
+@Serializable
+data object EventCreationScreen : NavKey
 
 @Composable
 fun EventCreationScreen(

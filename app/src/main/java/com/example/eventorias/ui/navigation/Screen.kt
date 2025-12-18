@@ -1,10 +1,11 @@
 package com.example.eventorias.ui.navigation
 
-sealed class Screen(val route: String) {
-    object Login : Screen("login")
-    object Main : Screen("main")
-    object EventCreation : Screen("event_creation")
-    object EventDetails : Screen("event_details/{eventId}") {
-        fun createRoute(eventId: String) = "event_details/$eventId"
-    }
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
+
+sealed interface Screen : NavKey {
+    @Serializable data object Login : Screen
+    @Serializable data object Main : Screen
+    @Serializable data object EventCreation : Screen
+    @Serializable data class EventDetails(val eventId: String) : Screen
 }

@@ -4,6 +4,7 @@
 
 # Fichiers de configuration locaux
 /local.properties
+/apikey.properties
 
 # Fichiers Android Studio
 .idea/

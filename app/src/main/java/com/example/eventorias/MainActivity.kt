@@ -12,23 +12,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.ui.NavDisplay
 import com.example.eventorias.ui.navigation.Screen
 import com.example.eventorias.ui.screens.EventCreationScreen
 import com.example.eventorias.ui.screens.EventDetailsScreen
 import com.example.eventorias.ui.screens.EventDetailsUiState
 import com.example.eventorias.ui.screens.MainScreen
 import com.example.eventorias.ui.theme.EventoriasTheme
+import com.example.network.GoogleMapsStaticRepository
 import com.firebase.ui.auth.AuthMethodPickerLayout
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.firebase.auth.FirebaseAuth
+import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
 
@@ -37,60 +39,67 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EventoriasTheme {
-                val navController = rememberNavController()
+                val backStack = remember { mutableStateListOf<Any>(Screen.Login) }
+                
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screen.Login.route,
-                        modifier = Modifier.padding(innerPadding)
-                    ) {
-                        composable(Screen.Login.route) {
-                            AuthScreen(
-                                onLoginSuccess = {
-                                    navController.navigate(Screen.Main.route) {
-                                        popUpTo(Screen.Login.route) { inclusive = true }
-                                    }
+                    NavDisplay(
+                        modifier = Modifier.padding(innerPadding),
+                        backStack = backStack,
+                        onBack = { backStack.removeLastOrNull() },
+                        entryProvider = { key ->
+                            when (key) {
+                                is Screen.Login -> NavEntry(key) {
+                                    AuthScreen(
+                                        onLoginSuccess = {
+                                            backStack.clear()
+                                            backStack.add(Screen.Main)
+                                        }
+                                    )
                                 }
-                            )
-                        }
-                        composable(Screen.Main.route) {
-                            MainScreen(
-                                onNavigateToEventCreation = {
-                                    navController.navigate(Screen.EventCreation.route)
-                                },
-                                onNavigateToEventDetails = { eventId ->
-                                    navController.navigate(Screen.EventDetails.createRoute(eventId))
+                                is Screen.Main -> NavEntry(key) {
+                                    MainScreen(
+                                        onNavigateToEventCreation = {
+                                            backStack.add(Screen.EventCreation)
+                                        },
+                                        onNavigateToEventDetails = { eventId ->
+                                            backStack.add(Screen.EventDetails(eventId))
+                                        }
+                                    )
                                 }
-                            )
+                                is Screen.EventCreation -> NavEntry(key) {
+                                    EventCreationScreen(
+                                        onBack = { backStack.removeLastOrNull() }
+                                    )
+                                }
+                                is Screen.EventDetails -> NavEntry(key) {
+                                    val address = "123 Rue de l'Art,\nQuartier des Galeries,\nParis, 75003, France"
+                                    val googleMapsRepository = koinInject<GoogleMapsStaticRepository>()
+                                    val mapUrl = googleMapsRepository.getStaticMapUrl(address = address)
+                                    
+                                    val dummyState = EventDetailsUiState(
+                                        title = "Art exhibition ${key.eventId}",
+                                        description = "Join us for an exclusive Art Exhibition showcasing the "
+                                                + "works of a talented contemporary artist. This exhibition "
+                                                + "features a captivating collection of both modern and classical "
+                                                + "pieces, offering a unique insight into the creative journey. "
+                                                + "Whether you're an art enthusiast or a casual visitor, you'll "
+                                                + "have the chance to explore a diverse range of artworks.",
+                                        address = address,
+                                        date = "July 20, 2024",
+                                        time = "10:00 AM",
+                                        imageUrl = R.drawable.ic_launcher_background,
+                                        mapImageUrl = mapUrl,
+                                        authorImageUrl = R.drawable.auth_google_icon
+                                    )
+                                    EventDetailsScreen(
+                                        uiState = dummyState,
+                                        onBack = { backStack.removeLastOrNull() }
+                                    )
+                                }
+                                else -> NavEntry(Unit) { }
+                            }
                         }
-                        composable(Screen.EventCreation.route) {
-                            EventCreationScreen(
-                                onBack = { navController.popBackStack() }
-                            )
-                        }
-                        composable(Screen.EventDetails.route) { backStackEntry ->
-                            val eventId = backStackEntry.arguments?.getString("eventId")
-                            val dummyState = EventDetailsUiState(
-                                title = "Art exhibition $eventId",
-                                description = "Join us for an exclusive Art Exhibition showcasing the "
-                                        + "works of a talented contemporary artist. This exhibition "
-                                        + "features a captivating collection of both modern and classical "
-                                        + "pieces, offering a unique insight into the creative journey. "
-                                        + "Whether you're an art enthusiast or a casual visitor, you'll "
-                                        + "have the chance to explore a diverse range of artworks.",
-                                address = "123 Rue de l'Art,\nQuartier des Galeries,\nParis, 75003, France",
-                                date = "July 20, 2024",
-                                time = "10:00 AM",
-                                imageUrl = R.drawable.ic_launcher_background,
-                                mapImageUrl = R.drawable.ic_launcher_background,
-                                authorImageUrl = R.drawable.auth_google_icon
-                            )
-                            EventDetailsScreen(
-                                uiState = dummyState,
-                                onBack = { navController.popBackStack() }
-                            )
-                        }
-                    }
+                    )
                 }
             }
         }

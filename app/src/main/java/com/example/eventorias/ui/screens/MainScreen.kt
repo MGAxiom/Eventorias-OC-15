@@ -22,9 +22,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.NavKey
 import com.example.eventorias.model.Evento
-import com.example.eventorias.ui.components.EventTopBar
+import com.example.eventorias.core.components.EventTopBar
+import kotlinx.serialization.Serializable
 import java.util.Date
+
+@Serializable
+data object Home: NavKey
 
 @Composable
 fun MainScreen(

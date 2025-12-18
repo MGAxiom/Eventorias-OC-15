@@ -1,4 +1,4 @@
-package com.example.eventorias.ui.components
+package com.example.eventorias.core.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
