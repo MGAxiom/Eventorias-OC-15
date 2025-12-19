@@ -1,6 +1,8 @@
 package com.example.eventorias.core.components
 
+import android.R.attr.label
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,18 +16,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LabeledValueField(
+fun LabelContent(
     modifier: Modifier = Modifier,
     label: String,
     value: String,
     placeholder: String = "",
     onValueChange: (String) -> Unit = {},
-    readOnly: Boolean = false
+    enabled: Boolean,
+    readOnly: Boolean = false,
 ) {
     Column(
         modifier = modifier
@@ -47,11 +48,11 @@ fun LabeledValueField(
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
+            enabled = enabled,
             readOnly = readOnly,
             textStyle = MaterialTheme.typography.bodyMedium.copy(
                 color = Color.White
             ),
-            cursorBrush = SolidColor(Color.White),
             modifier = Modifier.fillMaxWidth(),
             decorationBox = { innerTextField ->
                 Box {
@@ -68,14 +69,4 @@ fun LabeledValueField(
             }
         )
     }
-}
-
-@Preview
-@Composable
-private fun LabeledTextFieldPreview() {
-    LabeledValueField(
-        label = "Name",
-        value = "",
-        placeholder = "Christopher Evans"
-    )
 }

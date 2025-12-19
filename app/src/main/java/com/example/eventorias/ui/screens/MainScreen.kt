@@ -29,7 +29,7 @@ import kotlinx.serialization.Serializable
 import java.util.Date
 
 @Serializable
-data object Home: NavKey
+data object Home : NavKey
 
 @Composable
 fun MainScreen(
@@ -41,7 +41,11 @@ fun MainScreen(
     Scaffold(
         topBar = {
             if (selectedTab == MainTab.Events) {
-                EventTopBar(Modifier.padding(bottom = TOP_BAR_BOTTOM_PADDING.dp))
+                EventTopBar(
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .padding(bottom = TOP_BAR_BOTTOM_PADDING.dp)
+                )
             }
         },
         bottomBar = {
@@ -99,6 +103,7 @@ fun MainScreen(
                     onEventClick = onNavigateToEventDetails
                 )
             }
+
             MainTab.Profile -> {
                 Box(modifier = modifier) {
                     UserProfileScreen()

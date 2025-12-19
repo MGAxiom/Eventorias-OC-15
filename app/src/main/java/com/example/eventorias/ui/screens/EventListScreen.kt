@@ -44,7 +44,9 @@ fun EventListScreen(
     onEventClick: (String) -> Unit
 ) {
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .padding(horizontal = 12.dp)
+            .fillMaxSize()
     ) {
         when (events.isEmpty()) {
             false -> {

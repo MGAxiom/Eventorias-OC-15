@@ -14,6 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import com.example.core.R
 
 @Composable
 fun EventTopBar(
@@ -41,7 +43,7 @@ fun EventTopBar(
             onClick = { /* Handle filter icon click */ }
         ) {
             Icon(
-                imageVector = Icons.Default.Menu,
+                painterResource(R.drawable.icone_sort_eventorias_app),
                 contentDescription = "Filter"
             )
         }

@@ -31,7 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.example.eventorias.R
-import com.example.eventorias.core.components.LabeledValueField
+import com.example.eventorias.core.components.DateTextField
+import com.example.eventorias.core.components.TextField
+import com.example.eventorias.core.components.TimeTextField
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -126,14 +128,14 @@ private fun EventCreationBody(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
-        LabeledValueField(
+        TextField(
             label = "Title",
             value = title,
             onValueChange = onTitleChange,
             placeholder = "New event",
             modifier = Modifier.fillMaxWidth()
         )
-        LabeledValueField(
+        TextField(
             label = "Description",
             value = description,
             onValueChange = onDescriptionChange,
@@ -145,22 +147,22 @@ private fun EventCreationBody(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            LabeledValueField(
+            DateTextField(
                 label = "Date",
                 value = date,
-                onValueChange = onDateChange,
+                onDateSelected = onDateChange,
                 placeholder = "MM/DD/YYYY",
                 modifier = Modifier.weight(1f)
             )
-            LabeledValueField(
+            TimeTextField(
                 label = "Time",
                 value = time,
-                onValueChange = onTimeChange,
+                onTimeSelected = onTimeChange,
                 placeholder = "HH : MM",
                 modifier = Modifier.weight(1f)
             )
         }
-        LabeledValueField(
+        TextField(
             label = "Address",
             value = address,
             onValueChange = onAddressChange,

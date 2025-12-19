@@ -1,13 +1,10 @@
 package com.example.eventorias.ui.screens
 
-import android.widget.ToggleButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.eventorias.core.components.LabeledValueField
+import com.example.eventorias.core.components.TextField
 import com.example.eventorias.ui.components.RedToggle
 
 @Composable
@@ -37,12 +34,12 @@ fun UserProfileScreen() {
         TopBar(
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        LabeledValueField(
+        TextField(
             label = "Name",
             value = "Christopher Evans",
             modifier = Modifier.fillMaxWidth()
         )
-        LabeledValueField(
+        TextField(
             label = "Email",
             value = "william.henry.moody@my-own-personal-domain.com",
             modifier = Modifier.fillMaxWidth()

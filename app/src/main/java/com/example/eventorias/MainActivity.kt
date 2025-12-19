@@ -25,7 +25,7 @@ import com.example.eventorias.ui.screens.EventDetailsScreen
 import com.example.eventorias.ui.screens.EventDetailsUiState
 import com.example.eventorias.ui.screens.MainScreen
 import com.example.eventorias.ui.theme.EventoriasTheme
-import com.example.network.GoogleMapsStaticRepository
+import com.example.network.data.repository.GoogleMapsStaticRepository
 import com.firebase.ui.auth.AuthMethodPickerLayout
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
