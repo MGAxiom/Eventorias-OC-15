@@ -2,6 +2,7 @@ package com.example.eventorias
 
 import android.app.Application
 import com.example.eventorias.di.appModule
+import com.example.network.di.firebaseModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -13,7 +14,7 @@ class EventoriasApp : Application() {
         startKoin {
             androidLogger()
             androidContext(this@EventoriasApp)
-            modules(appModule)
+            modules(appModule, firebaseModule)
         }
     }
 }

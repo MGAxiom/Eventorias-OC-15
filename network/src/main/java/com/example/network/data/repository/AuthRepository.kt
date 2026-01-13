@@ -3,7 +3,7 @@ package com.example.network.data.repository
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 
-class AuthRepository constructor(
+class AuthRepository(
     private val firebaseAuth: FirebaseAuth
 ) {
 

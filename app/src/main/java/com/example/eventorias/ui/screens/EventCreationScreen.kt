@@ -1,5 +1,6 @@
 package com.example.eventorias.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,12 +14,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,15 +39,20 @@ import com.example.eventorias.R
 import com.example.eventorias.core.components.DateTextField
 import com.example.eventorias.core.components.TextField
 import com.example.eventorias.core.components.TimeTextField
+import com.example.eventorias.ui.model.EventUiState
+import com.example.eventorias.ui.viewmodel.EventViewModel
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinInject
+import org.koin.compose.koinInject
 
 @Serializable
-data object EventCreationScreen : NavKey
+data object EventCreationScreenKey : NavKey
 
 @Composable
 fun EventCreationScreen(
-    modifier: Modifier = Modifier,
-    onBack: () -> Unit = {}
+    uiState: EventUiState,
+    onBack: () -> Unit,
+    viewModel: EventViewModel = koinInject()
 ) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -50,8 +60,25 @@ fun EventCreationScreen(
     var time by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
 
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(uiState.isSaved) {
+        if (uiState.isSaved) {
+            Toast.makeText(context, "This event has been added", Toast.LENGTH_SHORT).show()
+            onBack()
+        }
+    }
+    
+    // Show error toast if something goes wrong
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+        }
+    }
+
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -69,27 +96,14 @@ fun EventCreationScreen(
                 address = address,
                 onAddressChange = { address = it }
             )
-            EventCreationButtons(onCancel = onBack)
+            EventCreationButtons(onCancel = onBack, onConfirm = {
+                // Delegate the logic to the ViewModel
+                viewModel.saveNewEvent(title, description, date, time, address)
+            })
         }
-        TextButton(
-            onClick = { /* Handle validate click */ },
-            shape = RoundedCornerShape(4.dp),
-            colors = ButtonColors(
-                containerColor = Color.Red,
-                contentColor = Color.White,
-                disabledContainerColor = Color.Red,
-                disabledContentColor = Color.White,
-            ),
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-                .padding(horizontal = 16.dp)
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = "Validate",
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+
+        if (uiState.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }
 }
@@ -173,7 +187,7 @@ private fun EventCreationBody(
 }
 
 @Composable
-private fun EventCreationButtons(onCancel: () -> Unit) {
+private fun EventCreationButtons(onCancel: () -> Unit, onConfirm: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
@@ -185,11 +199,9 @@ private fun EventCreationButtons(onCancel: () -> Unit) {
         Button(
             onClick = onCancel,
             shape = RoundedCornerShape(16.dp),
-            colors = ButtonColors(
+            colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White,
-                contentColor = Color.Black,
-                disabledContainerColor = Color.White,
-                disabledContentColor = Color.Black,
+                contentColor = Color.Black
             ),
             contentPadding = PaddingValues(0.dp),
             modifier = Modifier.size(54.dp)
@@ -200,13 +212,11 @@ private fun EventCreationButtons(onCancel: () -> Unit) {
             )
         }
         Button(
-            onClick = { /* Handle confirm click */ },
+            onClick = onConfirm, // Call the confirm lambda
             shape = RoundedCornerShape(16.dp),
-            colors = ButtonColors(
+            colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Red,
-                contentColor = Color.White,
-                disabledContainerColor = Color.Red,
-                disabledContentColor = Color.White,
+                contentColor = Color.White
             ),
             contentPadding = PaddingValues(0.dp),
             modifier = Modifier.size(54.dp)
@@ -222,5 +232,7 @@ private fun EventCreationButtons(onCancel: () -> Unit) {
 @Preview
 @Composable
 fun EventCreationScreenPreview() {
-    EventCreationScreen()
+    // Preview won't work with koinInject, but it's okay for now.
+    // To fix, we would pass a fake ViewModel.
+    // EventCreationScreen(onBack = {})
 }

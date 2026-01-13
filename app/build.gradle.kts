@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -74,6 +73,11 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.navigation3.runtime)
+
+    //Firebase
+    implementation(libs.firebase.ui.auth)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
 
     //Tests
     testImplementation(libs.junit)

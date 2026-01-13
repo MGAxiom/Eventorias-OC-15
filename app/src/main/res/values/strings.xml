@@ -3,4 +3,8 @@
     <string name="eventorias">Eventorias</string>
     <string name="sign_in_with_email">Sign in with Email</string>
     <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="error_title">Title not valid</string>
+    <string name="error_image">Invalid photo</string>
+    <string name="error_date">Invalid date format</string>
+    <string name="error_time">Invalid time</string>
 </resources>

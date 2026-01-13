@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -35,15 +36,22 @@ android {
 }
 
 dependencies {
+    implementation(project(":core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.koin.android)
+
+    //Firebase BoM
+    implementation(platform(libs.firebase.bom))
     
     api(libs.coil.compose)
     api(platform(libs.firebase.bom))
     api(libs.firebase.analytics)
     api(libs.firebase.auth)
     api(libs.firebase.ui.auth)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.firestore)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -1,7 +1,6 @@
 package com.example.eventorias.ui.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,8 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.eventorias.R
-import com.example.eventorias.model.Evento
-import com.example.eventorias.model.User
+import com.example.eventorias.core.domain.model.Evento
+import com.example.eventorias.core.domain.model.User
 import java.util.Date
 
 @Composable

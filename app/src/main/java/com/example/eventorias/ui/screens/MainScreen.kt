@@ -23,8 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
-import com.example.eventorias.model.Evento
+import com.example.eventorias.core.domain.model.Evento
 import com.example.eventorias.core.components.EventTopBar
+import com.example.eventorias.core.domain.model.User
 import kotlinx.serialization.Serializable
 import java.util.Date
 
@@ -90,7 +91,7 @@ fun MainScreen(
                         name = "Evento ${index + 1}",
                         date = Date(),
                         id = "$index",
-                        attachedUser = com.example.eventorias.model.User(
+                        attachedUser = User(
                             name = "User ${index + 1}",
                             id = index.toLong(),
                             profilePicture = ""
