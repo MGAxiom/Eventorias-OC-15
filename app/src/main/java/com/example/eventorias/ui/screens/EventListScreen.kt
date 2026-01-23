@@ -1,5 +1,6 @@
 package com.example.eventorias.ui.screens
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -68,7 +69,7 @@ private fun EventList(
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(LIST_SPACING.dp)
     ) {
-        items(events) {
+        items(events) { //Add key for better performance
             EventListItem(
                 event = it,
                 modifier = Modifier.clickable { onEventClick(it.id) }
@@ -131,9 +132,13 @@ private fun EventListScreenPreview() {
                 id = "$index",
                 attachedUser = User(
                     name = "User ${index + 1}",
-                    id = index.toLong(),
+                    id = index.toString(),
                     profilePicture = "image",
-                )
+                ),
+                description = "",
+                photoUri = Uri.EMPTY,
+                photoUrl = "",
+                location = ""
             )
         },
         onEventClick = {}

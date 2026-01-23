@@ -36,21 +36,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import coil.compose.AsyncImage
 import com.example.eventorias.R
+import com.example.eventorias.ui.model.EventDetailsUiState
 import kotlinx.serialization.Serializable
 
 @Serializable
 data object EventDetailsScreen : NavKey
-
-data class EventDetailsUiState(
-    val title: String,
-    val description: String,
-    val address: String,
-    val date: String,
-    val time: String,
-    val imageUrl: Int,
-    val mapImageUrl: String,
-    val authorImageUrl: Int
-)
 
 @Composable
 fun EventDetailsScreen(

@@ -19,7 +19,7 @@ interface FirestoreRepository {
 }
 
 class FirestoreRepositoryImpl(
-    private val firestore: FirebaseFirestore
+    firestore: FirebaseFirestore
 ) : FirestoreRepository {
 
     private val eventsCollection = firestore.collection("events")

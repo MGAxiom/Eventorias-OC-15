@@ -19,12 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
+import com.example.eventorias.ui.model.EventDetailsUiState
 import com.example.eventorias.ui.navigation.Screen
 import com.example.eventorias.ui.screens.EventCreationScreen
 import com.example.eventorias.ui.screens.EventDetailsScreen
-import com.example.eventorias.ui.screens.EventDetailsUiState
 import com.example.eventorias.ui.screens.MainScreen
 import com.example.eventorias.ui.theme.EventoriasTheme
+import com.example.eventorias.ui.viewmodel.EventViewModel
 import com.example.network.data.repository.GoogleMapsStaticRepository
 import com.firebase.ui.auth.AuthMethodPickerLayout
 import com.firebase.ui.auth.AuthUI
@@ -67,8 +68,9 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 is Screen.EventCreation -> NavEntry(key) {
+                                    val viewModel: EventViewModel = koinInject()
                                     EventCreationScreen(
-                                        onBack = { backStack.removeLastOrNull() }
+                                        onBack = { backStack.removeLastOrNull() },
                                     )
                                 }
                                 is Screen.EventDetails -> NavEntry(key) {

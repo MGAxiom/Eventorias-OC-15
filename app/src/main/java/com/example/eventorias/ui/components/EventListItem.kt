@@ -1,5 +1,6 @@
 package com.example.eventorias.ui.components
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -95,9 +96,13 @@ private fun EventListItemPreview() {
             id = "1",
             attachedUser = User(
                 name = "User 1",
-                id = 1,
+                id = "1",
                 profilePicture = "image",
-            )
+            ),
+            description = "",
+            photoUri = Uri.EMPTY,
+            photoUrl = "",
+            location = ""
         )
     )
 }

@@ -43,15 +43,14 @@ dependencies {
     implementation(libs.koin.android)
 
     //Firebase BoM
-    implementation(platform(libs.firebase.bom))
+    api(platform(libs.firebase.bom))
     
     api(libs.coil.compose)
-    api(platform(libs.firebase.bom))
     api(libs.firebase.analytics)
     api(libs.firebase.auth)
     api(libs.firebase.ui.auth)
-    implementation(libs.firebase.firestore.ktx)
-    implementation(libs.firebase.firestore)
+    api(libs.firebase.firestore)
+    api(libs.firebase.storage)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

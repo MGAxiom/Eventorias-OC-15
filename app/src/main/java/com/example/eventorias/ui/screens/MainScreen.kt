@@ -1,5 +1,6 @@
 package com.example.eventorias.ui.screens
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -93,9 +94,13 @@ fun MainScreen(
                         id = "$index",
                         attachedUser = User(
                             name = "User ${index + 1}",
-                            id = index.toLong(),
+                            id = index.toString(),
                             profilePicture = ""
-                        )
+                        ),
+                        description = "",
+                        photoUri = Uri.EMPTY,
+                        photoUrl = "",
+                        location = ""
                     )
                 }
                 EventListScreen(

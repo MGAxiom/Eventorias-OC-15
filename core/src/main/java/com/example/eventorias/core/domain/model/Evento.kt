@@ -4,11 +4,12 @@ import android.net.Uri
 import java.util.Date
 
 data class Evento(
-    val id: String,
-    val name: String,
-    val date: Date,
-    val description: String,
-    val photoUri: Uri?,
-    val location: String,
-    val attachedUser: User
+    val id: String = "",
+    val name: String = "",
+    val date: Date = Date(),
+    val description: String = "",
+    val photoUri: Uri? = null,
+    val photoUrl: String? = null,
+    val location: String = "",
+    val attachedUser: User? = null
 )

@@ -1,6 +1,5 @@
 package com.example.eventorias.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,19 +17,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,10 +31,12 @@ import com.example.eventorias.R
 import com.example.eventorias.core.components.DateTextField
 import com.example.eventorias.core.components.TextField
 import com.example.eventorias.core.components.TimeTextField
+import com.example.eventorias.core.utils.formatDate
+import com.example.eventorias.core.utils.formatTime
 import com.example.eventorias.ui.model.EventUiState
+import com.example.eventorias.ui.model.FormEvent
 import com.example.eventorias.ui.viewmodel.EventViewModel
 import kotlinx.serialization.Serializable
-import org.koin.androidx.compose.koinInject
 import org.koin.compose.koinInject
 
 @Serializable
@@ -50,32 +44,11 @@ data object EventCreationScreenKey : NavKey
 
 @Composable
 fun EventCreationScreen(
-    uiState: EventUiState,
     onBack: () -> Unit,
     viewModel: EventViewModel = koinInject()
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
-    var time by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-
-    LaunchedEffect(uiState.isSaved) {
-        if (uiState.isSaved) {
-            Toast.makeText(context, "This event has been added", Toast.LENGTH_SHORT).show()
-            onBack()
-        }
-    }
-    
-    // Show error toast if something goes wrong
-    LaunchedEffect(uiState.error) {
-        uiState.error?.let {
-            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-        }
-    }
+    val event by viewModel.event.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -85,24 +58,20 @@ fun EventCreationScreen(
         ) {
             EventCreationHeader(onBack)
             EventCreationBody(
-                title = title,
-                onTitleChange = { title = it },
-                description = description,
-                onDescriptionChange = { description = it },
-                date = date,
-                onDateChange = { date = it },
-                time = time,
-                onTimeChange = { time = it },
-                address = address,
-                onAddressChange = { address = it }
+                title = event.name,
+                description = event.description,
+                date = formatDate(event.date),
+                time = formatTime(event.date),
+                address = event.location,
+                onFormEvent = viewModel::onAction
             )
-            EventCreationButtons(onCancel = onBack, onConfirm = {
-                // Delegate the logic to the ViewModel
-                viewModel.saveNewEvent(title, description, date, time, address)
-            })
+            EventCreationButtons(
+                onCancel = onBack,
+                onConfirm = { viewModel.addEvent() }
+            )
         }
 
-        if (uiState.isLoading) {
+        if (uiState == EventUiState.Loading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }
@@ -118,8 +87,7 @@ private fun EventCreationHeader(onBack: () -> Unit) {
     ) {
         IconButton(onClick = onBack) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back"
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back"
             )
         }
     }
@@ -127,16 +95,12 @@ private fun EventCreationHeader(onBack: () -> Unit) {
 
 @Composable
 private fun EventCreationBody(
+    onFormEvent: (FormEvent) -> Unit,
     title: String,
-    onTitleChange: (String) -> Unit,
     description: String,
-    onDescriptionChange: (String) -> Unit,
     date: String,
-    onDateChange: (String) -> Unit,
     time: String,
-    onTimeChange: (String) -> Unit,
     address: String,
-    onAddressChange: (String) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -145,33 +109,31 @@ private fun EventCreationBody(
         TextField(
             label = "Title",
             value = title,
-            onValueChange = onTitleChange,
+            onValueChange = { onFormEvent(FormEvent.TitleChanged(it)) },
             placeholder = "New event",
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
             label = "Description",
             value = description,
-            onValueChange = onDescriptionChange,
+            onValueChange = { onFormEvent(FormEvent.DescriptionChanged(it)) },
             placeholder = "Tap here to enter your description",
             modifier = Modifier.fillMaxWidth()
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
+            horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()
         ) {
             DateTextField(
                 label = "Date",
                 value = date,
-                onDateSelected = onDateChange,
+                onDateSelected = { onFormEvent(FormEvent.DateChanged(it)) },
                 placeholder = "MM/DD/YYYY",
                 modifier = Modifier.weight(1f)
             )
             TimeTextField(
                 label = "Time",
                 value = time,
-                onTimeSelected = onTimeChange,
+                onTimeSelected = { onFormEvent(FormEvent.TimeChanged(it)) },
                 placeholder = "HH : MM",
                 modifier = Modifier.weight(1f)
             )
@@ -179,7 +141,7 @@ private fun EventCreationBody(
         TextField(
             label = "Address",
             value = address,
-            onValueChange = onAddressChange,
+            onValueChange = { onFormEvent(FormEvent.LocationChanged(it)) },
             placeholder = "Enter full adress",
             modifier = Modifier.fillMaxWidth()
         )
@@ -200,8 +162,7 @@ private fun EventCreationButtons(onCancel: () -> Unit, onConfirm: () -> Unit) {
             onClick = onCancel,
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
-                contentColor = Color.Black
+                containerColor = Color.White, contentColor = Color.Black
             ),
             contentPadding = PaddingValues(0.dp),
             modifier = Modifier.size(54.dp)
@@ -212,14 +173,10 @@ private fun EventCreationButtons(onCancel: () -> Unit, onConfirm: () -> Unit) {
             )
         }
         Button(
-            onClick = onConfirm, // Call the confirm lambda
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Red,
-                contentColor = Color.White
-            ),
-            contentPadding = PaddingValues(0.dp),
-            modifier = Modifier.size(54.dp)
+            onClick = onConfirm,
+            shape = RoundedCornerShape(16.dp), colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Red, contentColor = Color.White
+            ), contentPadding = PaddingValues(0.dp), modifier = Modifier.size(54.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.attach_file_icon),
