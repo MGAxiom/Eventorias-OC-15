@@ -20,6 +20,7 @@ val dataModule = module {
 
     single<ImageRepository> {
         ImageRepositoryImpl(
+            context = get(),
             storage = get()
         )
     }

@@ -1,12 +1,22 @@
 package com.example.eventorias.ui.screens
 
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,19 +24,27 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.runtime.NavKey
+import androidx.core.content.FileProvider
+import coil.compose.rememberAsyncImagePainter
+import com.example.eventorias.BuildConfig
 import com.example.eventorias.R
 import com.example.eventorias.core.components.DateTextField
 import com.example.eventorias.core.components.TextField
@@ -36,11 +54,9 @@ import com.example.eventorias.core.utils.formatTime
 import com.example.eventorias.ui.model.EventUiState
 import com.example.eventorias.ui.model.FormEvent
 import com.example.eventorias.ui.viewmodel.EventViewModel
-import kotlinx.serialization.Serializable
+import java.io.File
+import java.util.Objects
 import org.koin.compose.koinInject
-
-@Serializable
-data object EventCreationScreenKey : NavKey
 
 @Composable
 fun EventCreationScreen(
@@ -49,6 +65,7 @@ fun EventCreationScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val event by viewModel.event.collectAsState()
+
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -66,8 +83,11 @@ fun EventCreationScreen(
                 onFormEvent = viewModel::onAction
             )
             EventCreationButtons(
-                onCancel = onBack,
-                onConfirm = { viewModel.addEvent() }
+                photoUri = event.photoUri,
+                onFormEvent = viewModel::onAction
+            )
+            EventCreationFooter(
+                onConfirm = { viewModel.addEvent() },
             )
         }
 
@@ -149,7 +169,32 @@ private fun EventCreationBody(
 }
 
 @Composable
-private fun EventCreationButtons(onCancel: () -> Unit, onConfirm: () -> Unit) {
+private fun ColumnScope.EventCreationButtons(
+    photoUri: String?,
+    onFormEvent: (FormEvent) -> Unit
+) {
+    val context = LocalContext.current
+    val file = remember { createImageFile(context) }
+    val uri = remember(file) {
+        FileProvider.getUriForFile(
+            Objects.requireNonNull(context),
+            BuildConfig.APPLICATION_ID + ".provider", file
+        )
+    }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if (success) {
+                onFormEvent(FormEvent.PhotoUriChanged(uri.toString()))
+            }
+        }
+    )
+
+    val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { resultUri ->
+        resultUri?.let { onFormEvent(FormEvent.PhotoUriChanged(it.toString())) }
+    }
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
@@ -159,7 +204,7 @@ private fun EventCreationButtons(onCancel: () -> Unit, onConfirm: () -> Unit) {
             .fillMaxWidth()
     ) {
         Button(
-            onClick = onCancel,
+            onClick = { photoButtonAction(cameraLauncher, uri) },
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White, contentColor = Color.Black
@@ -173,10 +218,12 @@ private fun EventCreationButtons(onCancel: () -> Unit, onConfirm: () -> Unit) {
             )
         }
         Button(
-            onClick = onConfirm,
+            onClick = { photoPickerButtonAction(pickMedia) },
             shape = RoundedCornerShape(16.dp), colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Red, contentColor = Color.White
-            ), contentPadding = PaddingValues(0.dp), modifier = Modifier.size(54.dp)
+            ),
+            contentPadding = PaddingValues(0.dp),
+            modifier = Modifier.size(54.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.attach_file_icon),
@@ -184,6 +231,65 @@ private fun EventCreationButtons(onCancel: () -> Unit, onConfirm: () -> Unit) {
             )
         }
     }
+
+    if (photoUri != null) {
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .height(180.dp)
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter(photoUri),
+                contentDescription = "Selected photo",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+    } else {
+        Spacer(modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+private fun EventCreationFooter(
+    onConfirm: () -> Unit
+) {
+    TextButton(
+        onClick = onConfirm,
+        shape = RoundedCornerShape(4.dp), colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Red, contentColor = Color.White
+        ),
+        contentPadding = PaddingValues(0.dp),
+        modifier = Modifier
+            .padding(bottom = 14.dp)
+            .padding(horizontal = 24.dp)
+            .height(54.dp)
+            .fillMaxWidth()
+    ) {
+        Text("Validate")
+    }
+}
+
+private fun photoPickerButtonAction(pickMedia: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>) {
+    pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+}
+
+private fun photoButtonAction(cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>, uri: Uri) {
+    cameraLauncher.launch(uri)
+}
+
+private fun createImageFile(context: Context): File {
+    val storageDir: File? = context.getExternalFilesDir(null)
+    return File.createTempFile(
+        "JPEG_${System.currentTimeMillis()}_",
+        ".jpg",
+        storageDir
+    )
 }
 
 @Preview

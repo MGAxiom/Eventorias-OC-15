@@ -130,7 +130,7 @@ internal class EventViewModelImpl(
                 _event.value.copy(location = formEvent.location)
 
             is FormEvent.PhotoUriChanged ->
-                _event.value.copy(photoUri = formEvent.photoUri.toString())
+                _event.value.copy(photoUri = formEvent.photoUri)
         }
         _event.value = updatedEvent
     }

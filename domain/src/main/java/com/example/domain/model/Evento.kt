@@ -1,5 +1,6 @@
 package com.example.domain.model
 
+import com.sun.jndi.toolkit.url.Uri
 import java.util.Date
 
 data class Evento(
