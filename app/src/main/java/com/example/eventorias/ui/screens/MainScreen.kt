@@ -1,6 +1,5 @@
 package com.example.eventorias.ui.screens
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,15 +22,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.runtime.NavKey
-import com.example.eventorias.core.domain.model.Evento
+import com.example.domain.model.Evento
+import com.example.domain.model.User
 import com.example.eventorias.core.components.EventTopBar
-import com.example.eventorias.core.domain.model.User
-import kotlinx.serialization.Serializable
 import java.util.Date
-
-@Serializable
-data object Home : NavKey
 
 @Composable
 fun MainScreen(
@@ -46,7 +40,7 @@ fun MainScreen(
                 EventTopBar(
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
-                        .padding(bottom = TOP_BAR_BOTTOM_PADDING.dp)
+                        .padding(bottom = 8.dp)
                 )
             }
         },
@@ -93,12 +87,12 @@ fun MainScreen(
                         date = Date(),
                         id = "$index",
                         attachedUser = User(
-                            name = "User ${index + 1}",
-                            id = index.toString(),
-                            profilePicture = ""
+                            displayName = "User ${index + 1}",
+                            uid = index.toString(),
+                            photoUrl = null,
+                            email = "this@email.com"
                         ),
                         description = "",
-                        photoUri = Uri.EMPTY,
                         photoUrl = "",
                         location = ""
                     )

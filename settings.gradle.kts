@@ -1,12 +1,6 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        google()
         mavenCentral()
         gradlePluginPortal()
     }
@@ -21,5 +15,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "Eventorias"
 include(":app")
-include(":network")
 include(":core")
+include(":domain")
+include(":data")
+include(":core-kt")
+include(":core-ui")

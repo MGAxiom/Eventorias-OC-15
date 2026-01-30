@@ -1,8 +1,9 @@
 package com.example.eventorias.ui.screens
 
-import android.net.Uri
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,13 +22,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.eventorias.core.domain.model.Evento
-import com.example.eventorias.core.domain.model.User
+import com.example.domain.model.Evento
+import com.example.domain.model.User
 import com.example.eventorias.ui.components.EventListItem
 import java.util.Date
 
@@ -42,21 +44,10 @@ fun EventListScreen(
             .padding(horizontal = 12.dp)
             .fillMaxSize()
     ) {
-        when (events.isEmpty()) {
-            false -> {
-                EventList(events, onEventClick)
-            }
-            true -> {
-                ErrorState()
-            }
-            else -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
+        if (events.isNotEmpty()) {
+            EventList(events, onEventClick)
+        } else {
+            ErrorState()
         }
     }
 }
@@ -72,7 +63,10 @@ private fun EventList(
         items(events) { //Add key for better performance
             EventListItem(
                 event = it,
-                modifier = Modifier.clickable { onEventClick(it.id) }
+                modifier = Modifier.clickable(
+                    indication = LocalIndication.current,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { onEventClick(it.id) }
             )
         }
     }
@@ -131,12 +125,12 @@ private fun EventListScreenPreview() {
                 date = Date(System.currentTimeMillis()),
                 id = "$index",
                 attachedUser = User(
-                    name = "User ${index + 1}",
-                    id = index.toString(),
-                    profilePicture = "image",
+                    displayName = "User ${index + 1}",
+                    uid = index.toString(),
+                    photoUrl = null,
+                    email = "this@email.com"
                 ),
                 description = "",
-                photoUri = Uri.EMPTY,
                 photoUrl = "",
                 location = ""
             )

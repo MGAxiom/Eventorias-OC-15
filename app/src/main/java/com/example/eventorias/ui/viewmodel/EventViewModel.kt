@@ -1,28 +1,23 @@
 package com.example.eventorias.ui.viewmodel
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.eventorias.core.domain.model.Evento
-import com.example.eventorias.core.domain.model.User
-import com.example.eventorias.core.domain.usecase.AddEventUseCase
-import com.example.eventorias.core.domain.usecase.GetAllEventsUseCase
+import com.example.domain.model.Evento
+import com.example.domain.usecase.AddEventUseCase
+import com.example.domain.usecase.GetAllEventsUseCase
+import com.example.domain.usecase.GetCurrentUserUseCase
+import com.example.domain.usecase.GetMapUrlUseCase
+import com.example.domain.usecase.UploadImageUseCase
 import com.example.eventorias.core.utils.DateTimePart
 import com.example.eventorias.core.utils.updateEventDateTime
 import com.example.eventorias.ui.model.EventUiState
 import com.example.eventorias.ui.model.FormEvent
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import java.util.UUID
-import androidx.core.net.toUri
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 
 abstract class EventViewModel : ViewModel() {
     abstract val uiState: StateFlow<EventUiState>
@@ -33,13 +28,15 @@ abstract class EventViewModel : ViewModel() {
     abstract fun addEvent()
     abstract fun onSaveComplete()
     abstract fun onAction(formEvent: FormEvent)
+    abstract fun getMapUrl(address: String): String
 }
 
 internal class EventViewModelImpl(
     private val getAllEventsUseCase: GetAllEventsUseCase,
     private val addEventUseCase: AddEventUseCase,
-    private val storage: FirebaseStorage,
-    private val auth: FirebaseAuth
+    private val uploadImageUseCase: UploadImageUseCase,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val getMapUrlUseCase: GetMapUrlUseCase
 ) : EventViewModel() {
 
     private val _uiState = MutableStateFlow<EventUiState>(EventUiState.Success(emptyList()))
@@ -50,11 +47,13 @@ internal class EventViewModelImpl(
 
     private val _eventSaved = MutableStateFlow(false)
     override val eventSaved: StateFlow<Boolean> = _eventSaved.asStateFlow()
-    private val storageRef: StorageReference = storage.reference
-
 
     init {
         getAllEvents()
+    }
+
+    override fun getMapUrl(address: String): String {
+        return getMapUrlUseCase(address)
     }
 
     override fun onSaveComplete() {
@@ -77,7 +76,7 @@ internal class EventViewModelImpl(
 
     override fun addEvent() {
         val eventToAdd = _event.value
-        val currentUser = auth.currentUser
+        val currentUser = getCurrentUserUseCase()
 
         if (eventToAdd.name.isBlank()) {
             _uiState.value = EventUiState.Error("Event title cannot be empty.")
@@ -91,14 +90,10 @@ internal class EventViewModelImpl(
         viewModelScope.launch {
             _uiState.value = EventUiState.Loading
             try {
-                val imageUrl = eventToAdd.photoUri?.let { uploadImage(it.toString().toUri(), currentUser.uid) }
+                val imageUrl = eventToAdd.photoUri?.let { uploadImageUseCase(it, currentUser.uid) }
 
                 val finalEvent = eventToAdd.copy(
-                    attachedUser = User(
-                        id = currentUser.uid,
-                        name = currentUser.displayName ?: "Unknown User",
-                        profilePicture = currentUser.photoUrl.toString()
-                    ),
+                    attachedUser = currentUser,
                     photoUrl = imageUrl,
                     photoUri = null // Clear local URI before saving to Firestore
                 )
@@ -115,13 +110,6 @@ internal class EventViewModelImpl(
                 _uiState.value = EventUiState.Error(e.localizedMessage ?: "An error occurred during upload.")
             }
         }
-    }
-
-    private suspend fun uploadImage(imageUri: Uri, userId: String): String {
-        val fileName = "event_images/${userId}/${UUID.randomUUID()}"
-        val imageRef = storage.reference.child(fileName)
-        imageRef.putFile(imageUri).await()
-        return imageRef.downloadUrl.await().toString()
     }
 
     override fun onAction(formEvent: FormEvent) {
@@ -142,7 +130,7 @@ internal class EventViewModelImpl(
                 _event.value.copy(location = formEvent.location)
 
             is FormEvent.PhotoUriChanged ->
-                _event.value.copy(photoUri = formEvent.photoUri)
+                _event.value.copy(photoUri = formEvent.photoUri.toString())
         }
         _event.value = updatedEvent
     }

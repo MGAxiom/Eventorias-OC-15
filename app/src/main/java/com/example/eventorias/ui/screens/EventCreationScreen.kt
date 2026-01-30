@@ -30,7 +30,7 @@ import androidx.navigation3.runtime.NavKey
 import com.example.eventorias.R
 import com.example.eventorias.core.components.DateTextField
 import com.example.eventorias.core.components.TextField
-import com.example.eventorias.core.components.TimeTextField
+import com.example.core_ui.components.TimeTextField
 import com.example.eventorias.core.utils.formatDate
 import com.example.eventorias.core.utils.formatTime
 import com.example.eventorias.ui.model.EventUiState

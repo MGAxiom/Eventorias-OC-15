@@ -26,7 +26,6 @@ import com.example.eventorias.ui.screens.EventDetailsScreen
 import com.example.eventorias.ui.screens.MainScreen
 import com.example.eventorias.ui.theme.EventoriasTheme
 import com.example.eventorias.ui.viewmodel.EventViewModel
-import com.example.network.data.repository.GoogleMapsStaticRepository
 import com.firebase.ui.auth.AuthMethodPickerLayout
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
@@ -41,7 +40,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             EventoriasTheme {
                 val backStack = remember { mutableStateListOf<Any>(Screen.Login) }
-                
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavDisplay(
                         modifier = Modifier.padding(innerPadding),
@@ -74,10 +73,10 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 is Screen.EventDetails -> NavEntry(key) {
+                                    val viewModel: EventViewModel = koinInject()
                                     val address = "123 Rue de l'Art,\nQuartier des Galeries,\nParis, 75003, France"
-                                    val googleMapsRepository = koinInject<GoogleMapsStaticRepository>()
-                                    val mapUrl = googleMapsRepository.getStaticMapUrl(address = address)
-                                    
+                                    val mapUrl = viewModel.getMapUrl(address = address)
+
                                     val dummyState = EventDetailsUiState(
                                         title = "Art exhibition ${key.eventId}",
                                         description = "Join us for an exclusive Art Exhibition showcasing the "

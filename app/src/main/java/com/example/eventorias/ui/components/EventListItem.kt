@@ -1,6 +1,5 @@
 package com.example.eventorias.ui.components
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,9 +21,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.domain.model.Evento
+import com.example.domain.model.User
 import com.example.eventorias.R
-import com.example.eventorias.core.domain.model.Evento
-import com.example.eventorias.core.domain.model.User
 import java.util.Date
 
 @Composable
@@ -95,12 +94,12 @@ private fun EventListItemPreview() {
             ),
             id = "1",
             attachedUser = User(
-                name = "User 1",
-                id = "1",
-                profilePicture = "image",
+                uid = "1",
+                displayName = "User 1",
+                email = "this@email.com",
+                photoUrl = null,
             ),
             description = "",
-            photoUri = Uri.EMPTY,
             photoUrl = "",
             location = ""
         )

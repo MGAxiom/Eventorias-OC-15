@@ -19,7 +19,7 @@ private val DarkColorScheme = darkColorScheme(
     background = EventoriasDarkBackground,
     surface = EventoriasDarkBackground,
     onBackground = Color.White,
-    onSurface = Color.White
+    onSurface = Color.White,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -31,7 +31,7 @@ private val LightColorScheme = lightColorScheme(
     background = EventoriasDarkBackground,
     surface = EventoriasDarkBackground,
     onBackground = Color.White,
-    onSurface = Color.White
+    onSurface = Color.White,
 )
 
 @Composable

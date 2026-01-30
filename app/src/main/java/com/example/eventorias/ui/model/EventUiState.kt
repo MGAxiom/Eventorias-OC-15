@@ -1,6 +1,6 @@
 package com.example.eventorias.ui.model
 
-import com.example.eventorias.core.domain.model.Evento
+import com.example.domain.model.Evento
 
 sealed interface EventUiState {
     data class Success(val events: List<Evento>) : EventUiState
