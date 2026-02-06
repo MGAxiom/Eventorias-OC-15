@@ -6,22 +6,26 @@ import com.example.domain.model.Evento
 import com.example.domain.usecase.AddEventUseCase
 import com.example.domain.usecase.GetAllEventsUseCase
 import com.example.domain.usecase.GetCurrentUserUseCase
+import com.example.domain.usecase.GetEventUseCase
 import com.example.domain.usecase.GetMapUrlUseCase
 import com.example.domain.usecase.UploadImageUseCase
 import com.example.eventorias.core.utils.DateTimePart
 import com.example.eventorias.core.utils.updateEventDateTime
 import com.example.eventorias.ui.model.EventUiState
 import com.example.eventorias.ui.model.FormEvent
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 abstract class EventViewModel : ViewModel() {
     abstract val uiState: StateFlow<EventUiState>
     abstract val event: StateFlow<Evento>
+    abstract val selectedEvent: StateFlow<Evento?> // ADD THIS
     abstract val eventSaved: StateFlow<Boolean>
     abstract fun getAllEvents()
     abstract fun getEventById(id: String)
@@ -33,6 +37,7 @@ abstract class EventViewModel : ViewModel() {
 
 internal class EventViewModelImpl(
     private val getAllEventsUseCase: GetAllEventsUseCase,
+    private val getEventUseCase: GetEventUseCase,
     private val addEventUseCase: AddEventUseCase,
     private val uploadImageUseCase: UploadImageUseCase,
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
@@ -44,6 +49,9 @@ internal class EventViewModelImpl(
 
     private var _event = MutableStateFlow(Evento())
     override val event: StateFlow<Evento> = _event.asStateFlow()
+
+    private val _selectedEvent = MutableStateFlow<Evento?>(null)
+    override val selectedEvent: StateFlow<Evento?> = _selectedEvent.asStateFlow()
 
     private val _eventSaved = MutableStateFlow(false)
     override val eventSaved: StateFlow<Boolean> = _eventSaved.asStateFlow()
@@ -71,8 +79,15 @@ internal class EventViewModelImpl(
     }
 
     override fun getEventById(id: String) {
-        // TODO: Implement logic to fetch a single event from the repository
-    }
+        viewModelScope.launch {
+            getEventUseCase(id)
+                .onSuccess { event ->
+                    _selectedEvent.value = event
+                }
+                .onFailure { e ->
+                    _uiState.value = EventUiState.Error(e.message ?: "Failed to load event")
+                }
+        }    }
 
     override fun addEvent() {
         val eventToAdd = _event.value
@@ -95,17 +110,20 @@ internal class EventViewModelImpl(
                 val finalEvent = eventToAdd.copy(
                     attachedUser = currentUser,
                     photoUrl = imageUrl,
-                    photoUri = null // Clear local URI before saving to Firestore
+                    photoUri = null
                 )
 
-                addEventUseCase(finalEvent)
+                val result = addEventUseCase(finalEvent)
+
+                result
                     .onSuccess {
-                        _uiState.value = EventUiState.Success(emptyList()) // Reset to success state
+                        getAllEvents()
                         _eventSaved.value = true
                     }
                     .onFailure { e ->
                         _uiState.value = EventUiState.Error(e.localizedMessage ?: "Failed to save event.")
                     }
+
             } catch (e: Exception) {
                 _uiState.value = EventUiState.Error(e.localizedMessage ?: "An error occurred during upload.")
             }

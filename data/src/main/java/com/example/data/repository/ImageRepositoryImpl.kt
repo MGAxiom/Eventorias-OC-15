@@ -1,7 +1,6 @@
 package com.example.data.repository
 
 import android.content.Context
-import android.net.Uri
 import com.example.domain.repository.ImageRepository
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await

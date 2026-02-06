@@ -1,12 +1,14 @@
 package com.example.eventorias.ui.screens
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -15,24 +17,29 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.domain.model.Evento
-import com.example.domain.model.User
 import com.example.eventorias.core.components.EventTopBar
-import java.util.Date
+import com.example.eventorias.ui.model.EventUiState
+import com.example.eventorias.ui.viewmodel.EventViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun MainScreen(
     onNavigateToEventCreation: () -> Unit,
-    onNavigateToEventDetails: (String) -> Unit
+    onNavigateToEventDetails: (String) -> Unit,
+    viewModel: EventViewModel = koinInject()
 ) {
     var selectedTab by remember { mutableStateOf(MainTab.Events) }
+    val uiState by viewModel.uiState.collectAsState()
+
 
     Scaffold(
         topBar = {
@@ -81,27 +88,37 @@ fun MainScreen(
         val modifier = Modifier.padding(innerPadding)
         when (selectedTab) {
             MainTab.Events -> {
-                val sampleEvents = List(10) { index ->
-                    Evento(
-                        name = "Evento ${index + 1}",
-                        date = Date(),
-                        id = "$index",
-                        attachedUser = User(
-                            displayName = "User ${index + 1}",
-                            uid = index.toString(),
-                            photoUrl = null,
-                            email = "this@email.com"
-                        ),
-                        description = "",
-                        photoUrl = "",
-                        location = ""
-                    )
+                when (uiState) {
+                    is EventUiState.Loading -> {
+                        Box(
+                            modifier = modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    is EventUiState.Success -> {
+                        val events = (uiState as EventUiState.Success).events
+                        EventListScreen(
+                            modifier = modifier,
+                            events = events,
+                            onEventClick = onNavigateToEventDetails
+                        )
+                    }
+
+                    is EventUiState.Error -> {
+                        Box(
+                            modifier = modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = (uiState as EventUiState.Error).message,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
                 }
-                EventListScreen(
-                    modifier = modifier,
-                    events = sampleEvents,
-                    onEventClick = onNavigateToEventDetails
-                )
             }
 
             MainTab.Profile -> {

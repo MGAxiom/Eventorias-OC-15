@@ -7,9 +7,9 @@ import java.util.Locale
 
 enum class DateTimePart { DATE, TIME }
 
-fun updateEventDateTime(currentDate: Date?, newPartString: String, partToUpdate: DateTimePart): Date {
+fun updateEventDateTime(currentDateMillis: Long, newPartString: String, partToUpdate: DateTimePart): Long {
     val calendar = Calendar.getInstance()
-    currentDate?.let { calendar.time = it }
+    calendar.timeInMillis = currentDateMillis
 
     try {
         when (partToUpdate) {
@@ -38,5 +38,5 @@ fun updateEventDateTime(currentDate: Date?, newPartString: String, partToUpdate:
     } catch (e: Exception) {
         print(e)
     }
-    return calendar.time
+    return calendar.timeInMillis
 }

@@ -18,7 +18,8 @@ val appModule = module {
             addEventUseCase = get(),
             uploadImageUseCase = get(),
             getCurrentUserUseCase = get(),
-            getMapUrlUseCase = get()
+            getMapUrlUseCase = get(),
+            getEventUseCase = get()
         )
     }
 }

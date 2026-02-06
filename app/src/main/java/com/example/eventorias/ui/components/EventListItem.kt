@@ -1,6 +1,5 @@
 package com.example.eventorias.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -18,13 +18,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.domain.model.Evento
 import com.example.domain.model.User
 import com.example.eventorias.R
-import java.util.Date
+import com.example.eventorias.core.utils.formatDate
+import com.example.eventorias.core.utils.formatTime
 
 @Composable
 fun EventListItem(
@@ -42,15 +43,15 @@ fun EventListItem(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
-                // Changed padding to only apply to the start (left), so the end (right) has 0 padding.
                 .padding(start = 16.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.auth_google_icon),
+            AsyncImage(
+                model = event.attachedUser?.photoUrl ?: R.drawable.auth_google_icon,
                 contentDescription = "profile image",
                 modifier = Modifier
                     .size(40.dp)
-                    .fillMaxHeight()
+                    .clip(CircleShape), // Make it circular
+                contentScale = ContentScale.Crop
             )
 
             Column(
@@ -66,17 +67,18 @@ fun EventListItem(
                         .padding(bottom = 4.dp)
                 )
                 Text(
-                    text = event.date.time.toString(),
+                    text = "${formatDate(event.date)} at ${formatTime(event.date)}",
                     modifier = Modifier.fillMaxWidth()
                 )
             }
 
-            Image(
-                painter = painterResource(id = R.drawable.ic_launcher_background),
+            AsyncImage(
+                model = event.photoUrl ?: R.drawable.ic_launcher_background,
                 contentDescription = "event image",
-                contentScale = ContentScale.FillBounds,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .width(136.dp)
+                    .fillMaxHeight()
                     .clip(RoundedCornerShape(5.dp))
             )
         }
@@ -89,9 +91,7 @@ private fun EventListItemPreview() {
     EventListItem(
         event = Evento(
             name = "Evento 1",
-            date = Date(
-                System.currentTimeMillis()
-            ),
+            date = System.currentTimeMillis(),
             id = "1",
             attachedUser = User(
                 uid = "1",

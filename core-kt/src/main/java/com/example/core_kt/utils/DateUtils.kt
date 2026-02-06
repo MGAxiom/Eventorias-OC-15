@@ -4,14 +4,12 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-fun formatDate(date: Date?): String {
-    if (date == null) return ""
+fun formatDate(dateMillis: Long): String {
     val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-    return formatter.format(date)
+    return formatter.format(Date(dateMillis))
 }
 
-fun formatTime(date: Date?): String {
-    if (date == null) return ""
+fun formatTime(dateMillis: Long): String {
     val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return formatter.format(date)
+    return formatter.format(Date(dateMillis))
 }

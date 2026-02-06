@@ -1,12 +1,9 @@
 package com.example.domain.model
 
-import com.sun.jndi.toolkit.url.Uri
-import java.util.Date
-
 data class Evento(
     val id: String = "",
     val name: String = "",
-    val date: Date = Date(),
+    val date: Long = System.currentTimeMillis(),
     val description: String = "",
     val photoUri: String? = null,
     val photoUrl: String? = null,

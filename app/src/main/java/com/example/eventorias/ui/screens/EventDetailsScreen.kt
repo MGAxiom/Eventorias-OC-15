@@ -65,8 +65,8 @@ fun EventDetailsScreen(
 
         Spacer(Modifier.height(IMAGE_TOP_SPACER.dp))
 
-        Image(
-            painter = painterResource(id = uiState.imageUrl),
+        AsyncImage(
+            model = uiState.imageUrl,
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
@@ -125,7 +125,7 @@ fun EventDetailsScreen(
 private fun EventDatesComponent(
     date: String,
     time: String,
-    authorImageUrl: Int
+    authorImageUrl: String?
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Column(
@@ -161,8 +161,8 @@ private fun EventDatesComponent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Image(
-            painter = painterResource(id = authorImageUrl),
+        AsyncImage(
+            model = authorImageUrl ?: R.drawable.auth_google_icon,
             contentDescription = null,
             modifier = Modifier
                 .size(AUTHOR_IMAGE_SIZE.dp)
@@ -214,9 +214,9 @@ fun EventDetailsPreview() {
         address = "123 Rue de l'Art,\nQuartier des Galeries,\nParis, 75003, France",
         date = "July 20, 2024",
         time = "10:00 AM",
-        imageUrl = R.drawable.ic_launcher_background,
+        imageUrl = "",
         mapImageUrl = "https://maps.googleapis.com/maps/api/staticmap?center=48.8566,2.3522&zoom=15&size=600x300&maptype=roadmap&markers=color:red%7C48.8566,2.3522",
-        authorImageUrl = R.drawable.auth_google_icon
+        authorImageUrl = ""
     )
     EventDetailsScreen(uiState = sampleState)
 }

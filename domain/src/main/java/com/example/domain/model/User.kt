@@ -1,8 +1,8 @@
 package com.example.domain.model
 
 data class User(
-    val uid: String,
-    val displayName: String?,
-    val email: String?,
-    val photoUrl: String?
+    val uid: String = "",
+    val displayName: String? = null,
+    val email: String? = null,
+    val photoUrl: String? = null
 )

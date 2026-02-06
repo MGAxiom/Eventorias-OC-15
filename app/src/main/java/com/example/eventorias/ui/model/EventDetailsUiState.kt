@@ -6,7 +6,7 @@ data class EventDetailsUiState(
     val address: String,
     val date: String,
     val time: String,
-    val imageUrl: Int,
+    val imageUrl: String?,
     val mapImageUrl: String,
-    val authorImageUrl: Int
+    val authorImageUrl: String?
 )

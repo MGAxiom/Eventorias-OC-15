@@ -7,18 +7,25 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
+import com.example.eventorias.core.utils.formatDate
+import com.example.eventorias.core.utils.formatTime
 import com.example.eventorias.ui.model.EventDetailsUiState
 import com.example.eventorias.ui.navigation.Screen
 import com.example.eventorias.ui.screens.EventCreationScreen
@@ -68,34 +75,55 @@ class MainActivity : ComponentActivity() {
                                 }
                                 is Screen.EventCreation -> NavEntry(key) {
                                     val viewModel: EventViewModel = koinInject()
+                                    val eventSaved by viewModel.eventSaved.collectAsState()
+
+                                    LaunchedEffect(eventSaved) {
+                                        if (eventSaved) {
+                                            viewModel.onSaveComplete()
+                                            backStack.removeLastOrNull()
+                                        }
+                                    }
+
                                     EventCreationScreen(
                                         onBack = { backStack.removeLastOrNull() },
                                     )
                                 }
                                 is Screen.EventDetails -> NavEntry(key) {
                                     val viewModel: EventViewModel = koinInject()
-                                    val address = "123 Rue de l'Art,\nQuartier des Galeries,\nParis, 75003, France"
-                                    val mapUrl = viewModel.getMapUrl(address = address)
 
-                                    val dummyState = EventDetailsUiState(
-                                        title = "Art exhibition ${key.eventId}",
-                                        description = "Join us for an exclusive Art Exhibition showcasing the "
-                                                + "works of a talented contemporary artist. This exhibition "
-                                                + "features a captivating collection of both modern and classical "
-                                                + "pieces, offering a unique insight into the creative journey. "
-                                                + "Whether you're an art enthusiast or a casual visitor, you'll "
-                                                + "have the chance to explore a diverse range of artworks.",
-                                        address = address,
-                                        date = "July 20, 2024",
-                                        time = "10:00 AM",
-                                        imageUrl = R.drawable.ic_launcher_background,
-                                        mapImageUrl = mapUrl,
-                                        authorImageUrl = R.drawable.auth_google_icon
-                                    )
-                                    EventDetailsScreen(
-                                        uiState = dummyState,
-                                        onBack = { backStack.removeLastOrNull() }
-                                    )
+                                    // Fetch the specific event
+                                    LaunchedEffect(key.eventId) {
+                                        viewModel.getEventById(key.eventId)
+                                    }
+
+                                    val selectedEvent by viewModel.selectedEvent.collectAsState() // CHANGED
+
+                                    selectedEvent?.let { event ->
+                                        val mapUrl = viewModel.getMapUrl(address = event.location)
+
+                                        val uiState = EventDetailsUiState(
+                                            title = event.name,
+                                            description = event.description,
+                                            address = event.location,
+                                            date = formatDate(event.date),
+                                            time = formatTime(event.date),
+                                            imageUrl = event.photoUrl ?: "",
+                                            mapImageUrl = mapUrl,
+                                            authorImageUrl = event.attachedUser?.photoUrl
+                                        )
+
+                                        EventDetailsScreen(
+                                            uiState = uiState,
+                                            onBack = { backStack.removeLastOrNull() }
+                                        )
+                                    } ?: run {
+                                        Box(
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            CircularProgressIndicator()
+                                        }
+                                    }
                                 }
                                 else -> NavEntry(Unit) { }
                             }
