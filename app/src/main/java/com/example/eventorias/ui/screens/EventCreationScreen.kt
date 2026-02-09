@@ -49,6 +49,9 @@ import com.example.eventorias.R
 import com.example.eventorias.core.components.DateTextField
 import com.example.eventorias.core.components.TextField
 import com.example.core_ui.components.TimeTextField
+import com.example.core_ui.utils.createImageFile
+import com.example.core_ui.utils.photoButtonAction
+import com.example.core_ui.utils.photoPickerButtonAction
 import com.example.eventorias.core.utils.formatDate
 import com.example.eventorias.core.utils.formatTime
 import com.example.eventorias.ui.model.EventUiState
@@ -273,23 +276,6 @@ private fun EventCreationFooter(
     ) {
         Text("Validate")
     }
-}
-
-private fun photoPickerButtonAction(pickMedia: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>) {
-    pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-}
-
-private fun photoButtonAction(cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>, uri: Uri) {
-    cameraLauncher.launch(uri)
-}
-
-private fun createImageFile(context: Context): File {
-    val storageDir: File? = context.getExternalFilesDir(null)
-    return File.createTempFile(
-        "JPEG_${System.currentTimeMillis()}_",
-        ".jpg",
-        storageDir
-    )
 }
 
 @Preview

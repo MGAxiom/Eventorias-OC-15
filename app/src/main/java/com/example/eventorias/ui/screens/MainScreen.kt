@@ -26,7 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.eventorias.core.components.EventTopBar
+import com.example.core_ui.components.EventTopBar
+import com.example.eventorias.R
 import com.example.eventorias.ui.model.EventUiState
 import com.example.eventorias.ui.viewmodel.EventViewModel
 import org.koin.compose.koinInject
@@ -45,6 +46,7 @@ fun MainScreen(
         topBar = {
             if (selectedTab == MainTab.Events) {
                 EventTopBar(
+                    filterIcon = R.drawable.eventorias_filter_icon,
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .padding(bottom = 8.dp)

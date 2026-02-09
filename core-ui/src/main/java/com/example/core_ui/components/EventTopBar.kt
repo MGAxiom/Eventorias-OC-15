@@ -1,5 +1,6 @@
-package com.example.eventorias.core.components
+package com.example.core_ui.components
 
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 
 @Composable
 fun EventTopBar(
+    filterIcon: Int,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -37,13 +39,13 @@ fun EventTopBar(
                 contentDescription = "Search"
             )
         }
-//        IconButton(
-//            onClick = { /* Handle filter icon click */ }
-//        ) {
-//            Icon(
-//                painterResource(R.drawable),
-//                contentDescription = "Filter"
-//            )
-//        }
+        IconButton(
+            onClick = { /* Handle filter icon click */ }
+        ) {
+            Icon(
+                painterResource(filterIcon),
+                contentDescription = "Filter"
+            )
+        }
     }
 }

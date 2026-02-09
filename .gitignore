@@ -19,7 +19,6 @@
 
 # Google Services (informations sensibles)
 /app/google-services.json
-/app/EventoriasOC Google Services.json
 
 # Fichiers de build C/C++
 .cxx/
