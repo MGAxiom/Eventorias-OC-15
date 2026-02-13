@@ -58,7 +58,6 @@ class EventViewModelTest {
         getCurrentUserUseCase = mockk()
         getMapUrlUseCase = mockk()
 
-        // Default mock for getAllEventsUseCase
         every { getAllEventsUseCase() } returns flowOf(emptyList())
     }
 
@@ -95,11 +94,9 @@ class EventViewModelTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        // When
         viewModel.onAction(FormEvent.TitleChanged("New Event Title"))
         advanceUntilIdle()
 
-        // Then
         viewModel.event.test {
             val event = awaitItem()
             assertEquals("New Event Title", event.name)
@@ -116,11 +113,9 @@ class EventViewModelTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        // When
         viewModel.onAction(FormEvent.TitleChanged(""))
         advanceUntilIdle()
 
-        // Then
         viewModel.validationErrors.test {
             val errors = awaitItem()
             assertTrue(errors.containsKey("title"))
@@ -133,11 +128,9 @@ class EventViewModelTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        // When
         viewModel.onAction(FormEvent.DescriptionChanged("Event Description"))
         advanceUntilIdle()
 
-        // Then
         viewModel.event.test {
             val event = awaitItem()
             assertEquals("Event Description", event.description)
@@ -149,11 +142,9 @@ class EventViewModelTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        // When
         viewModel.onAction(FormEvent.LocationChanged("123 Main St"))
         advanceUntilIdle()
 
-        // Then
         viewModel.event.test {
             val event = awaitItem()
             assertEquals("123 Main St", event.location)
@@ -168,11 +159,9 @@ class EventViewModelTest {
         val currentUser = User(uid = "user1", displayName = "Test User")
         every { getCurrentUserUseCase() } returns currentUser
 
-        // When - try to add event without filling required fields
         viewModel.addEvent()
         advanceUntilIdle()
 
-        // Then - validation errors should be present
         viewModel.validationErrors.test {
             val errors = awaitItem()
             assertTrue(errors.containsKey("title"))
@@ -180,7 +169,6 @@ class EventViewModelTest {
             assertTrue(errors.containsKey("address"))
         }
 
-        // addEvent should not be called
         coVerify(exactly = 0) { addEventUseCase(any()) }
     }
 
@@ -201,17 +189,14 @@ class EventViewModelTest {
         coEvery { addEventUseCase(any()) } returns Result.success(Unit)
         every { getAllEventsUseCase() } returns flowOf(listOf(evento))
 
-        // Fill all required fields
         viewModel.onAction(FormEvent.TitleChanged("Test Event"))
         viewModel.onAction(FormEvent.DescriptionChanged("Test Description"))
         viewModel.onAction(FormEvent.LocationChanged("Test Location"))
         advanceUntilIdle()
 
-        // When
         viewModel.addEvent()
         advanceUntilIdle()
 
-        // Then
         viewModel.eventSaved.test {
             assertTrue(awaitItem())
         }
@@ -226,17 +211,14 @@ class EventViewModelTest {
 
         every { getCurrentUserUseCase() } returns null
 
-        // Fill all required fields
         viewModel.onAction(FormEvent.TitleChanged("Test Event"))
         viewModel.onAction(FormEvent.DescriptionChanged("Test Description"))
         viewModel.onAction(FormEvent.LocationChanged("Test Location"))
         advanceUntilIdle()
 
-        // When
         viewModel.addEvent()
         advanceUntilIdle()
 
-        // Then
         viewModel.uiState.test {
             val state = awaitItem()
             assertTrue(state is EventUiState.Error)
@@ -255,7 +237,6 @@ class EventViewModelTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        // Then
         viewModel.uiState.test {
             val state = awaitItem()
             assertTrue(state is EventUiState.Success)

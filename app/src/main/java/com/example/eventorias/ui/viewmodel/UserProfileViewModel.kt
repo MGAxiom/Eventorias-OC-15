@@ -5,16 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.User
 import com.example.domain.usecase.GetCurrentUserUseCase
 import com.example.domain.usecase.UpdateUserProfilePhotoUseCase
+import com.example.eventorias.ui.model.ProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
-sealed class ProfileUiState {
-    data object Loading : ProfileUiState()
-    data class Success(val user: User, val profilePhotoUrl: String?) : ProfileUiState()
-    data class Error(val message: String) : ProfileUiState()
-}
 
 abstract class UserProfileViewModel : ViewModel() {
     abstract val uiState: StateFlow<ProfileUiState>
@@ -54,7 +49,6 @@ internal class UserProfileViewModelImpl(
 
             updateUserProfilePhotoUseCase(imageUri, currentUser.uid)
                 .onSuccess { photoUrl ->
-                    // Reload user to get updated profile
                     val updatedUser = getCurrentUserUseCase()
                     _uiState.value = ProfileUiState.Success(updatedUser ?: currentUser, photoUrl)
                 }
@@ -62,7 +56,6 @@ internal class UserProfileViewModelImpl(
                     _uiState.value = ProfileUiState.Error(
                         exception.message ?: "Failed to update profile photo"
                     )
-                    // Restore previous state after showing error
                     loadUserProfile()
                 }
         }

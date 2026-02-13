@@ -6,6 +6,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,7 +39,7 @@ import com.example.core_ui.utils.photoPickerButtonAction
 import com.example.eventorias.R
 import com.example.eventorias.core.components.TextField
 import com.example.eventorias.ui.components.RedToggle
-import com.example.eventorias.ui.viewmodel.ProfileUiState
+import com.example.eventorias.ui.model.ProfileUiState
 import com.example.eventorias.ui.viewmodel.UserProfileViewModel
 import org.koin.compose.koinInject
 
@@ -155,7 +156,6 @@ private fun TopBar(
         )
         Spacer(Modifier.weight(1f))
 
-        // Show local URI first (during upload), then fall back to saved photo URL
         val imageModel = profileImageUri ?: profilePhotoUrl
 
         if (imageModel != null) {
@@ -166,7 +166,10 @@ private fun TopBar(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .clickable { onImageClick() }
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { onImageClick() }
             )
         } else {
             Image(
@@ -176,7 +179,10 @@ private fun TopBar(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .clickable { onImageClick() }
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { onImageClick() }
             )
         }
     }
