@@ -9,10 +9,8 @@ class UpdateUserProfilePhotoUseCase(
 ) {
     suspend operator fun invoke(imageUri: String, userId: String): Result<String> {
         return try {
-            // Upload image to Firebase Storage
             val photoUrl = imageRepository.uploadImage(imageUri, userId)
 
-            // Update Firebase Auth user profile
             authRepository.updateUserProfile(photoUrl = photoUrl)
                 .onSuccess {
                     return Result.success(photoUrl)

@@ -28,7 +28,8 @@ val appModule = module {
     viewModel<UserProfileViewModel> {
         UserProfileViewModelImpl(
             getCurrentUserUseCase = get(),
-            updateUserProfilePhotoUseCase = get()
+            updateUserProfilePhotoUseCase = get(),
+            updateUserNameUseCase = get()
         )
     }
 }

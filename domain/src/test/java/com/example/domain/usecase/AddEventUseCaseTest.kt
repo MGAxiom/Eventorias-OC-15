@@ -25,7 +25,6 @@ class AddEventUseCaseTest {
 
     @Test
     fun `invoke should return success when repository adds event successfully`() = runTest {
-        // Given
         val evento = Evento(
             id = "1",
             name = "Test Event",
@@ -35,25 +34,20 @@ class AddEventUseCaseTest {
         )
         coEvery { firestoreRepository.addEvent(evento) } returns Result.success(Unit)
 
-        // When
         val result = addEventUseCase(evento)
 
-        // Then
         assertTrue(result.isSuccess)
         coVerify(exactly = 1) { firestoreRepository.addEvent(evento) }
     }
 
     @Test
     fun `invoke should return failure when repository fails`() = runTest {
-        // Given
         val evento = Evento(name = "Test Event")
         val exception = Exception("Failed to add event")
         coEvery { firestoreRepository.addEvent(evento) } returns Result.failure(exception)
 
-        // When
         val result = addEventUseCase(evento)
 
-        // Then
         assertTrue(result.isFailure)
         assertEquals(exception, result.exceptionOrNull())
         coVerify(exactly = 1) { firestoreRepository.addEvent(evento) }

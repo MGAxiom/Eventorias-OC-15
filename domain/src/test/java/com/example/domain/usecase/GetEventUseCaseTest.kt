@@ -24,37 +24,31 @@ class GetEventUseCaseTest {
 
     @Test
     fun `invoke should return event when found`() = runTest {
-        // Given
         val eventId = "event123"
         val evento = Evento(
             id = eventId,
             name = "Test Event",
             description = "Test Description"
         )
-        coEvery { firestoreRepository.getEventById(eventId) } returns Result.success(evento)
+        coEvery { firestoreRepository.getEvent(eventId) } returns Result.success(evento)
 
-        // When
         val result = getEventUseCase(eventId)
 
-        // Then
         assertTrue(result.isSuccess)
         assertEquals(evento, result.getOrNull())
-        coVerify(exactly = 1) { firestoreRepository.getEventById(eventId) }
+        coVerify(exactly = 1) { firestoreRepository.getEvent(eventId) }
     }
 
     @Test
     fun `invoke should return failure when event not found`() = runTest {
-        // Given
         val eventId = "nonexistent"
         val exception = Exception("Event not found")
-        coEvery { firestoreRepository.getEventById(eventId) } returns Result.failure(exception)
+        coEvery { firestoreRepository.getEvent(eventId) } returns Result.failure(exception)
 
-        // When
         val result = getEventUseCase(eventId)
 
-        // Then
         assertTrue(result.isFailure)
         assertEquals(exception, result.exceptionOrNull())
-        coVerify(exactly = 1) { firestoreRepository.getEventById(eventId) }
+        coVerify(exactly = 1) { firestoreRepository.getEvent(eventId) }
     }
 }

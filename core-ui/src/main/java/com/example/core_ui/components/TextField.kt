@@ -1,8 +1,9 @@
-package com.example.eventorias.core.components
+package com.example.core_ui.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.eventorias.core.components.LabelContent
 
 @Composable
 fun TextField(

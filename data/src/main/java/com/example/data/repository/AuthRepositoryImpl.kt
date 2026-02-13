@@ -7,6 +7,7 @@ import com.example.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.userProfileChangeRequest
 import kotlinx.coroutines.tasks.await
+import androidx.core.net.toUri
 
 class AuthRepositoryImpl(
     private val firebaseAuth: FirebaseAuth
@@ -29,7 +30,6 @@ class AuthRepositoryImpl(
                     onSuccess()
                 } else {
                     task.exception?.let { onFailure(it) }
-                    Log.v("AuthRepository", "deleteCurrentUserAccount: ${task.exception}")
                 }
             } ?: onFailure(IllegalStateException("User not found to delete."))
     }
@@ -41,7 +41,7 @@ class AuthRepositoryImpl(
 
             val profileUpdates = userProfileChangeRequest {
                 displayName?.let { this.displayName = it }
-                photoUrl?.let { this.photoUri = android.net.Uri.parse(it) }
+                photoUrl?.let { this.photoUri = it.toUri() }
             }
 
             user.updateProfile(profileUpdates).await()

@@ -1,5 +1,6 @@
 package com.example.eventorias.ui.screens
 
+import android.R.attr.contentDescription
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
@@ -146,7 +147,7 @@ private fun EventDatesComponent(
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = Icons.Default.DateRange,
+                     painter = painterResource(R.drawable.access_time),
                     contentDescription = null,
                     tint = Color.White
                 )

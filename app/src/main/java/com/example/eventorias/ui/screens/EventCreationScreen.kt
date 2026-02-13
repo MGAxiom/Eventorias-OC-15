@@ -1,10 +1,6 @@
 package com.example.eventorias.ui.screens
 
-import android.content.Context
-import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -47,7 +43,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.eventorias.BuildConfig
 import com.example.eventorias.R
 import com.example.eventorias.core.components.DateTextField
-import com.example.eventorias.core.components.TextField
+import com.example.core_ui.components.TextField
 import com.example.core_ui.components.TimeTextField
 import com.example.core_ui.utils.createImageFile
 import com.example.core_ui.utils.photoButtonAction
@@ -57,7 +53,6 @@ import com.example.eventorias.core.utils.formatTime
 import com.example.eventorias.ui.model.EventUiState
 import com.example.eventorias.ui.model.FormEvent
 import com.example.eventorias.ui.viewmodel.EventViewModel
-import java.io.File
 import java.util.Objects
 import org.koin.compose.koinInject
 

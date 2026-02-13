@@ -2,7 +2,6 @@ package com.example.eventorias.ui.screens
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -35,9 +34,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.core_ui.components.DebouncedTextField
 import com.example.core_ui.utils.photoPickerButtonAction
 import com.example.eventorias.R
-import com.example.eventorias.core.components.TextField
+import com.example.core_ui.components.TextField
 import com.example.eventorias.ui.components.RedToggle
 import com.example.eventorias.ui.model.ProfileUiState
 import com.example.eventorias.ui.viewmodel.UserProfileViewModel
@@ -92,9 +92,10 @@ fun UserProfileScreen(
                     },
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                TextField(
+                DebouncedTextField(
                     label = "Name",
                     value = state.user.displayName ?: "No name",
+                    onInputValidated = { viewModel.updateUserName(it) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 TextField(

@@ -46,17 +46,14 @@ class UpdateUserProfilePhotoUseCaseTest {
 
     @Test
     fun `invoke should return failure when image upload fails`() = runTest {
-        // Given
         val imageUri = "content://test/image.jpg"
         val userId = "user123"
         val exception = Exception("Upload failed")
 
         coEvery { imageRepository.uploadImage(imageUri, userId) } throws exception
 
-        // When
         val result = updateUserProfilePhotoUseCase(imageUri, userId)
 
-        // Then
         assertTrue(result.isFailure)
         assertEquals(exception, result.exceptionOrNull())
         coVerify(exactly = 1) { imageRepository.uploadImage(imageUri, userId) }
@@ -65,7 +62,6 @@ class UpdateUserProfilePhotoUseCaseTest {
 
     @Test
     fun `invoke should return failure when auth update fails`() = runTest {
-        // Given
         val imageUri = "content://test/image.jpg"
         val userId = "user123"
         val photoUrl = "https://storage.firebase.com/image.jpg"
@@ -74,10 +70,8 @@ class UpdateUserProfilePhotoUseCaseTest {
         coEvery { imageRepository.uploadImage(imageUri, userId) } returns photoUrl
         coEvery { authRepository.updateUserProfile(photoUrl = photoUrl) } returns Result.failure(exception)
 
-        // When
         val result = updateUserProfilePhotoUseCase(imageUri, userId)
 
-        // Then
         assertTrue(result.isFailure)
         assertEquals(exception, result.exceptionOrNull())
         coVerify(exactly = 1) { imageRepository.uploadImage(imageUri, userId) }
