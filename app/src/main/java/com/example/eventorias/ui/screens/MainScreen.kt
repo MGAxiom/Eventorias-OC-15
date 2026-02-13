@@ -41,12 +41,25 @@ fun MainScreen(
     var selectedTab by remember { mutableStateOf(MainTab.Events) }
     val uiState by viewModel.uiState.collectAsState()
 
+    var searchQuery by remember { mutableStateOf("") }
+    var isSearchVisible by remember { mutableStateOf(false) }
+    var sortDescending by remember { mutableStateOf(true) }
 
     Scaffold(
         topBar = {
             if (selectedTab == MainTab.Events) {
                 EventTopBar(
                     filterIcon = R.drawable.eventorias_filter_icon,
+                    searchQuery = searchQuery,
+                    isSearchVisible = isSearchVisible,
+                    onSearchQueryChange = { searchQuery = it },
+                    onSearchToggle = {
+                        isSearchVisible = !isSearchVisible
+                        if (!isSearchVisible) {
+                            searchQuery = ""
+                        }
+                    },
+                    onFilterToggle = { sortDescending = !sortDescending },
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .padding(bottom = 8.dp)
@@ -101,10 +114,22 @@ fun MainScreen(
                     }
 
                     is EventUiState.Success -> {
-                        val events = (uiState as EventUiState.Success).events
+                        val allEvents = (uiState as EventUiState.Success).events
+
+                        val filteredEvents = allEvents
+                            .filter { event ->
+                                if (searchQuery.isEmpty()) {
+                                    true
+                                } else {
+                                    event.name.contains(searchQuery, ignoreCase = true)
+                                }
+                            }
+                            .sortedBy { event -> event.date }
+                            .let { if (sortDescending) it.reversed() else it }
+
                         EventListScreen(
                             modifier = modifier,
-                            events = events,
+                            events = filteredEvents,
                             onEventClick = onNavigateToEventDetails
                         )
                     }

@@ -31,4 +31,9 @@ dependencies {
     implementation(project(":core-kt"))
 
     implementation(libs.koin.android)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
 }

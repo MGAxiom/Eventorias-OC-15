@@ -25,46 +25,61 @@ fun LabelContent(
     onValueChange: (String) -> Unit = {},
     enabled: Boolean,
     readOnly: Boolean = false,
+    isError: Boolean = false,
+    errorMessage: String? = null,
 ) {
-    Column(
-        modifier = modifier
-            .background(
-                color = Color(0xFF4A4752),
-                shape = RoundedCornerShape(4.dp)
+    Column(modifier = modifier) {
+        Column(
+            modifier = Modifier
+                .background(
+                    color = if (isError) Color(0xFF663333) else Color(0xFF4A4752),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                .padding(vertical = 12.dp, horizontal = 16.dp)
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    color = if (isError) Color(0xFFFFAAAA) else Color(0xFFBFBBC7)
+                )
             )
-            .padding(vertical = 12.dp, horizontal = 16.dp)
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall.copy(
-                color = Color(0xFFBFBBC7)
-            )
-        )
 
-        Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            enabled = enabled,
-            readOnly = readOnly,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(
-                color = Color.White
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            decorationBox = { innerTextField ->
-                Box {
-                    if (value.isEmpty() && placeholder.isNotEmpty()) {
-                        Text(
-                            text = placeholder,
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = Color.Gray
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                enabled = enabled,
+                readOnly = readOnly,
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
+                    color = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                decorationBox = { innerTextField ->
+                    Box {
+                        if (value.isEmpty() && placeholder.isNotEmpty()) {
+                            Text(
+                                text = placeholder,
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = Color.Gray
+                                )
                             )
-                        )
+                        }
+                        innerTextField()
                     }
-                    innerTextField()
                 }
-            }
-        )
+            )
+        }
+
+        if (isError && errorMessage != null) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = errorMessage,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = Color(0xFFFF6B6B)
+                ),
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
+        }
     }
 }

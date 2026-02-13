@@ -6,6 +6,7 @@ import com.example.domain.usecase.GetEventUseCase
 import com.example.domain.usecase.UploadImageUseCase
 import com.example.domain.usecase.GetCurrentUserUseCase
 import com.example.domain.usecase.GetMapUrlUseCase
+import com.example.domain.usecase.UpdateUserProfilePhotoUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
@@ -15,4 +16,5 @@ val useCaseModule = module {
     factory { UploadImageUseCase(get()) }
     factory { GetCurrentUserUseCase(get()) }
     factory { GetMapUrlUseCase(get()) }
+    factory { UpdateUserProfilePhotoUseCase(get(), get()) }
 }

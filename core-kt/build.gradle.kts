@@ -12,5 +12,5 @@ kotlin {
     }
 }
 dependencies {
-    implementation(libs.activity.compose)
+    testImplementation(libs.junit)
 }

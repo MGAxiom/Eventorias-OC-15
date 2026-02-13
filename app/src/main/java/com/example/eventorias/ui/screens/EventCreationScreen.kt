@@ -68,7 +68,7 @@ fun EventCreationScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val event by viewModel.event.collectAsState()
-
+    val validationErrors by viewModel.validationErrors.collectAsState()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -83,6 +83,7 @@ fun EventCreationScreen(
                 date = formatDate(event.date),
                 time = formatTime(event.date),
                 address = event.location,
+                validationErrors = validationErrors,
                 onFormEvent = viewModel::onAction
             )
             EventCreationButtons(
@@ -124,6 +125,7 @@ private fun EventCreationBody(
     date: String,
     time: String,
     address: String,
+    validationErrors: Map<String, String>,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -134,6 +136,8 @@ private fun EventCreationBody(
             value = title,
             onValueChange = { onFormEvent(FormEvent.TitleChanged(it)) },
             placeholder = "New event",
+            isError = validationErrors.containsKey("title"),
+            errorMessage = validationErrors["title"],
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
@@ -141,6 +145,8 @@ private fun EventCreationBody(
             value = description,
             onValueChange = { onFormEvent(FormEvent.DescriptionChanged(it)) },
             placeholder = "Tap here to enter your description",
+            isError = validationErrors.containsKey("description"),
+            errorMessage = validationErrors["description"],
             modifier = Modifier.fillMaxWidth()
         )
         Row(
@@ -151,6 +157,8 @@ private fun EventCreationBody(
                 value = date,
                 onDateSelected = { onFormEvent(FormEvent.DateChanged(it)) },
                 placeholder = "MM/DD/YYYY",
+                isError = validationErrors.containsKey("date"),
+                errorMessage = validationErrors["date"],
                 modifier = Modifier.weight(1f)
             )
             TimeTextField(
@@ -158,6 +166,8 @@ private fun EventCreationBody(
                 value = time,
                 onTimeSelected = { onFormEvent(FormEvent.TimeChanged(it)) },
                 placeholder = "HH : MM",
+                isError = validationErrors.containsKey("time"),
+                errorMessage = validationErrors["time"],
                 modifier = Modifier.weight(1f)
             )
         }
@@ -166,6 +176,8 @@ private fun EventCreationBody(
             value = address,
             onValueChange = { onFormEvent(FormEvent.LocationChanged(it)) },
             placeholder = "Enter full adress",
+            isError = validationErrors.containsKey("address"),
+            errorMessage = validationErrors["address"],
             modifier = Modifier.fillMaxWidth()
         )
     }

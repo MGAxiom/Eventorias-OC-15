@@ -33,6 +33,8 @@ fun DateTextField(
     onDateSelected: (String) -> Unit,
     placeholder: String = "",
     readOnly: Boolean = true,
+    isError: Boolean = false,
+    errorMessage: String? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -57,6 +59,8 @@ fun DateTextField(
         value = value,
         placeholder = placeholder,
         enabled = false,
+        isError = isError,
+        errorMessage = errorMessage,
         modifier = modifier.clickable(
             indication = LocalIndication.current,
             interactionSource = remember { MutableInteractionSource() }

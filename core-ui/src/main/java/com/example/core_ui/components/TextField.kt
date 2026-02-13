@@ -11,6 +11,8 @@ fun TextField(
     value: String,
     placeholder: String = "",
     onValueChange: (String) -> Unit = {},
+    isError: Boolean = false,
+    errorMessage: String? = null,
 ) {
     LabelContent(
         label = label,
@@ -19,6 +21,8 @@ fun TextField(
         onValueChange = onValueChange,
         enabled = true,
         readOnly = false,
+        isError = isError,
+        errorMessage = errorMessage,
         modifier = modifier
     )
 }

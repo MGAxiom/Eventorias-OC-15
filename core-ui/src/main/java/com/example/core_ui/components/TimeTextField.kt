@@ -18,6 +18,8 @@ fun TimeTextField(
     onTimeSelected: (String) -> Unit,
     placeholder: String = "",
     is24Hour: Boolean = true,
+    isError: Boolean = false,
+    errorMessage: String? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -41,6 +43,8 @@ fun TimeTextField(
         value = value,
         placeholder = placeholder,
         enabled = false,
+        isError = isError,
+        errorMessage = errorMessage,
         modifier = modifier.clickable(
             indication = LocalIndication.current,
             interactionSource = remember { MutableInteractionSource() }

@@ -27,6 +27,7 @@ abstract class EventViewModel : ViewModel() {
     abstract val event: StateFlow<Evento>
     abstract val selectedEvent: StateFlow<Evento?> // ADD THIS
     abstract val eventSaved: StateFlow<Boolean>
+    abstract val validationErrors: StateFlow<Map<String, String>>
     abstract fun getAllEvents()
     abstract fun getEventById(id: String)
     abstract fun addEvent()
@@ -55,6 +56,9 @@ internal class EventViewModelImpl(
 
     private val _eventSaved = MutableStateFlow(false)
     override val eventSaved: StateFlow<Boolean> = _eventSaved.asStateFlow()
+
+    private val _validationErrors = MutableStateFlow<Map<String, String>>(emptyMap())
+    override val validationErrors: StateFlow<Map<String, String>> = _validationErrors.asStateFlow()
 
     init {
         getAllEvents()
@@ -90,13 +94,14 @@ internal class EventViewModelImpl(
         }    }
 
     override fun addEvent() {
+        // Validate all fields before submitting
+        if (!validateAllFields()) {
+            return
+        }
+
         val eventToAdd = _event.value
         val currentUser = getCurrentUserUseCase()
 
-        if (eventToAdd.name.isBlank()) {
-            _uiState.value = EventUiState.Error("Event title cannot be empty.")
-            return
-        }
         if (currentUser == null) {
             _uiState.value = EventUiState.Error("You must be logged in to create an event.")
             return
@@ -119,6 +124,7 @@ internal class EventViewModelImpl(
                     .onSuccess {
                         getAllEvents()
                         _eventSaved.value = true
+                        _validationErrors.value = emptyMap()
                     }
                     .onFailure { e ->
                         _uiState.value = EventUiState.Error(e.localizedMessage ?: "Failed to save event.")
@@ -130,13 +136,67 @@ internal class EventViewModelImpl(
         }
     }
 
+    private fun validateAllFields(): Boolean {
+        val errors = mutableMapOf<String, String>()
+        val eventToValidate = _event.value
+
+        if (eventToValidate.name.isBlank()) {
+            errors["title"] = "Title cannot be empty"
+        }
+
+        if (eventToValidate.description.isBlank()) {
+            errors["description"] = "Description cannot be empty"
+        }
+
+        if (eventToValidate.location.isBlank()) {
+            errors["address"] = "Address cannot be empty"
+        }
+
+        _validationErrors.value = errors
+        return errors.isEmpty()
+    }
+
+    private fun validateField(fieldName: String, value: String) {
+        val errors = _validationErrors.value.toMutableMap()
+
+        when (fieldName) {
+            "title" -> {
+                if (value.isBlank()) {
+                    errors["title"] = "Title cannot be empty"
+                } else {
+                    errors.remove("title")
+                }
+            }
+            "description" -> {
+                if (value.isBlank()) {
+                    errors["description"] = "Description cannot be empty"
+                } else {
+                    errors.remove("description")
+                }
+            }
+            "address" -> {
+                if (value.isBlank()) {
+                    errors["address"] = "Address cannot be empty"
+                } else {
+                    errors.remove("address")
+                }
+            }
+        }
+
+        _validationErrors.value = errors
+    }
+
     override fun onAction(formEvent: FormEvent) {
         val updatedEvent = when (formEvent) {
-            is FormEvent.TitleChanged ->
+            is FormEvent.TitleChanged -> {
+                validateField("title", formEvent.title)
                 _event.value.copy(name = formEvent.title)
+            }
 
-            is FormEvent.DescriptionChanged ->
+            is FormEvent.DescriptionChanged -> {
+                validateField("description", formEvent.description)
                 _event.value.copy(description = formEvent.description)
+            }
 
             is FormEvent.DateChanged ->
                 _event.value.copy(date = updateEventDateTime(_event.value.date, formEvent.date, DateTimePart.DATE))
@@ -144,8 +204,10 @@ internal class EventViewModelImpl(
             is FormEvent.TimeChanged ->
                 _event.value.copy(date = updateEventDateTime(_event.value.date, formEvent.time, DateTimePart.TIME))
 
-            is FormEvent.LocationChanged ->
+            is FormEvent.LocationChanged -> {
+                validateField("address", formEvent.location)
                 _event.value.copy(location = formEvent.location)
+            }
 
             is FormEvent.PhotoUriChanged ->
                 _event.value.copy(photoUri = formEvent.photoUri)
