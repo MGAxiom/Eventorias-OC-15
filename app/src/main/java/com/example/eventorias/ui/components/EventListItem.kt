@@ -1,5 +1,6 @@
 package com.example.eventorias.ui.components
 
+import android.R.attr.contentDescription
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -50,7 +53,8 @@ fun EventListItem(
                 contentDescription = "profile image",
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(CircleShape), // Make it circular
+                    .clip(CircleShape)
+                    .semantics { hideFromAccessibility() },
                 contentScale = ContentScale.Crop
             )
 
