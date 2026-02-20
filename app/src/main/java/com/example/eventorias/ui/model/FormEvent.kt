@@ -1,6 +1,5 @@
 package com.example.eventorias.ui.model
 
-import android.net.Uri
 import androidx.annotation.StringRes
 import com.example.eventorias.R
 

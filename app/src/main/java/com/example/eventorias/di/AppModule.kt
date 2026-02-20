@@ -5,7 +5,6 @@ import com.example.eventorias.ui.viewmodel.EventViewModel
 import com.example.eventorias.ui.viewmodel.EventViewModelImpl
 import com.example.eventorias.ui.viewmodel.UserProfileViewModel
 import com.example.eventorias.ui.viewmodel.UserProfileViewModelImpl
-import com.example.data.repository.GoogleMapStaticRepositoryImpl
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 

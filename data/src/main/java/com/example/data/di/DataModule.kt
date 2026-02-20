@@ -6,7 +6,6 @@ import com.example.data.repository.ImageRepositoryImpl
 import com.example.domain.repository.AuthRepository
 import com.example.domain.repository.GoogleMapStaticRepository
 import com.example.domain.repository.ImageRepository
-import com.google.firebase.auth.FirebaseAuth
 import org.koin.dsl.module
 
 val dataModule = module {

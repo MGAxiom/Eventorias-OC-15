@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id("jacoco")
 }
 
 android {
@@ -11,6 +12,19 @@ android {
         minSdk = 30
     }
 
+    buildTypes {
+        debug {
+            enableUnitTestCoverage = true
+        }
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -19,6 +33,8 @@ android {
         jvmTarget = "11"
     }
 }
+
+apply(from = "${rootProject.projectDir}/jacoco.gradle.kts")
 
 dependencies {
     implementation(enforcedPlatform(libs.firebase.bom))

@@ -2,7 +2,6 @@ package com.example.eventorias.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.model.User
 import com.example.domain.usecase.GetCurrentUserUseCase
 import com.example.domain.usecase.UpdateUserNameUseCase
 import com.example.domain.usecase.UpdateUserProfilePhotoUseCase

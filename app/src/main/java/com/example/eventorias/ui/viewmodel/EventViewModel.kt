@@ -13,14 +13,12 @@ import com.example.eventorias.core.utils.DateTimePart
 import com.example.eventorias.core.utils.updateEventDateTime
 import com.example.eventorias.ui.model.EventUiState
 import com.example.eventorias.ui.model.FormEvent
-import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 abstract class EventViewModel : ViewModel() {
     abstract val uiState: StateFlow<EventUiState>

@@ -1,7 +1,5 @@
 package com.example.eventorias.ui.screens
 
-import android.R.attr.contentDescription
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
