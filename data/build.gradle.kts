@@ -18,6 +18,17 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildTypes {
+        debug {
+        }
+    }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {
