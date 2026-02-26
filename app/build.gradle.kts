@@ -82,10 +82,11 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.compose.material.ripple)
-
+    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
 
     // Firebase
     implementation(libs.firebase.ui.auth)
+    implementation(libs.firebase.messaging)
 
     //Tests
     testImplementation(libs.junit)
@@ -93,6 +94,7 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.androidx.arch.core.testing)
+    testImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

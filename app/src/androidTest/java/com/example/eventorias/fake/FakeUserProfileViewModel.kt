@@ -20,4 +20,6 @@ class FakeUserProfileViewModel(
     override fun updateProfilePhoto(imageUri: String) {}
 
     override fun updateUserName(userName: String) {}
+
+    override fun setNotificationsEnabled(enabled: Boolean) {}
 }

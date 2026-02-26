@@ -5,7 +5,6 @@ import com.example.eventorias.ui.viewmodel.EventViewModel
 import com.example.eventorias.ui.viewmodel.EventViewModelImpl
 import com.example.eventorias.ui.viewmodel.UserProfileViewModel
 import com.example.eventorias.ui.viewmodel.UserProfileViewModelImpl
-import com.example.data.repository.GoogleMapStaticRepositoryImpl
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -17,11 +16,11 @@ val appModule = module {
     viewModel<EventViewModel> {
         EventViewModelImpl(
             getAllEventsUseCase = get(),
+            getEventUseCase = get(),
             addEventUseCase = get(),
             uploadImageUseCase = get(),
             getCurrentUserUseCase = get(),
-            getMapUrlUseCase = get(),
-            getEventUseCase = get()
+            getMapUrlUseCase = get()
         )
     }
 
@@ -29,7 +28,9 @@ val appModule = module {
         UserProfileViewModelImpl(
             getCurrentUserUseCase = get(),
             updateUserProfilePhotoUseCase = get(),
-            updateUserNameUseCase = get()
+            updateUserNameUseCase = get(),
+            setNotificationsEnabledUseCase = get(),
+            areNotificationsEnabledUseCase = get()
         )
     }
 }

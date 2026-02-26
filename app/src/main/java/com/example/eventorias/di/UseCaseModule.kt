@@ -8,6 +8,8 @@ import com.example.domain.usecase.GetCurrentUserUseCase
 import com.example.domain.usecase.GetMapUrlUseCase
 import com.example.domain.usecase.UpdateUserNameUseCase
 import com.example.domain.usecase.UpdateUserProfilePhotoUseCase
+import com.example.domain.usecase.SetNotificationsEnabledUseCase
+import com.example.domain.usecase.AreNotificationsEnabledUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
@@ -19,4 +21,6 @@ val useCaseModule = module {
     factory { GetMapUrlUseCase(get()) }
     factory { UpdateUserProfilePhotoUseCase(get(), get()) }
     factory { UpdateUserNameUseCase(get()) }
+    factory { SetNotificationsEnabledUseCase(get()) }
+    factory { AreNotificationsEnabledUseCase(get()) }
 }

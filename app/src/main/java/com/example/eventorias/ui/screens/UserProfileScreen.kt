@@ -1,6 +1,10 @@
 package com.example.eventorias.ui.screens
 
+import android.Manifest
+import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -20,6 +24,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,26 +35,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.core_ui.components.DebouncedTextField
+import com.example.core_ui.components.TextField
 import com.example.core_ui.utils.photoPickerButtonAction
 import com.example.eventorias.R
-import com.example.core_ui.components.TextField
 import com.example.eventorias.ui.components.RedToggle
 import com.example.eventorias.ui.model.ProfileUiState
 import com.example.eventorias.ui.viewmodel.UserProfileViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import org.koin.compose.koinInject
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun UserProfileScreen(
     viewModel: UserProfileViewModel = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var localImageUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
@@ -58,6 +69,17 @@ fun UserProfileScreen(
             localImageUri = it
             viewModel.updateProfilePhoto(it.toString())
         }
+    }
+
+    val notificationPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        null
+    }
+
+    LaunchedEffect(notificationPermissionState?.status) {
+        val isGranted = notificationPermissionState?.status?.isGranted ?: true
+        viewModel.setNotificationsEnabled(isGranted)
     }
 
     Column(
@@ -88,9 +110,7 @@ fun UserProfileScreen(
                 TopBar(
                     profileImageUri = localImageUri,
                     profilePhotoUrl = state.profilePhotoUrl,
-                    onImageClick = {
-                        photoPickerButtonAction(photoPickerLauncher)
-                    },
+                    onImageClick = { photoPickerButtonAction(photoPickerLauncher) },
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 DebouncedTextField(
@@ -107,7 +127,23 @@ fun UserProfileScreen(
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    RedToggle()
+                    RedToggle(
+                        checked = state.notificationsEnabled,
+                        onCheckedChange = {
+                            if (it) {
+                                if (notificationPermissionState != null) {
+                                    notificationPermissionState.launchPermissionRequest()
+                                } else {
+                                    viewModel.setNotificationsEnabled(true)
+                                }
+                            } else {
+                                val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                }
+                                context.startActivity(intent)
+                            }
+                        }
+                    )
                     Text(
                         text = "Notifications",
                         color = Color.White,

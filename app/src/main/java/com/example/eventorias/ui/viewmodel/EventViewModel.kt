@@ -91,7 +91,8 @@ internal class EventViewModelImpl(
                 .onFailure { e ->
                     _uiState.value = EventUiState.Error(e.message ?: "Failed to load event")
                 }
-        }    }
+        }
+    }
 
     override fun addEvent() {
         // Validate all fields before submitting

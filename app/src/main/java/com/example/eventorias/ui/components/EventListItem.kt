@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -37,6 +38,7 @@ fun EventListItem(
         modifier = modifier
             .height(80.dp)
             .fillMaxWidth()
+            .semantics(mergeDescendants = true) {}
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -47,10 +49,10 @@ fun EventListItem(
         ) {
             AsyncImage(
                 model = event.attachedUser?.photoUrl ?: R.drawable.auth_google_icon,
-                contentDescription = "profile image",
+                contentDescription = null, // Should not be announced
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(CircleShape), // Make it circular
+                    .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )
 
@@ -74,7 +76,7 @@ fun EventListItem(
 
             AsyncImage(
                 model = event.photoUrl ?: R.drawable.ic_launcher_background,
-                contentDescription = "event image",
+                contentDescription = null, // Should not be announced
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .width(136.dp)

@@ -43,7 +43,7 @@ import androidx.core.content.FileProvider
 import coil.compose.rememberAsyncImagePainter
 import com.example.eventorias.BuildConfig
 import com.example.eventorias.R
-import com.example.eventorias.core.components.DateTextField
+import com.example.core_ui.components.DateTextField
 import com.example.core_ui.components.TextField
 import com.example.core_ui.components.TimeTextField
 import com.example.core_ui.utils.createImageFile

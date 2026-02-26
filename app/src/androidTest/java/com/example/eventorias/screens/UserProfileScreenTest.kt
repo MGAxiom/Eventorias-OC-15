@@ -45,7 +45,7 @@ class UserProfileScreenTest {
     @Test
     fun successState_displaysUserName() {
         val user = User(uid = "1", displayName = "Jane Doe", email = "jane@example.com")
-        fakeViewModel.setUiState(ProfileUiState.Success(user, null))
+        fakeViewModel.setUiState(ProfileUiState.Success(user, null, false))
         composeTestRule.setContent {
             UserProfileScreen()
         }
@@ -55,7 +55,7 @@ class UserProfileScreenTest {
     @Test
     fun successState_displaysEmail() {
         val user = User(uid = "1", displayName = "Jane Doe", email = "jane@example.com")
-        fakeViewModel.setUiState(ProfileUiState.Success(user, null))
+        fakeViewModel.setUiState(ProfileUiState.Success(user, null, false))
         composeTestRule.setContent {
             UserProfileScreen()
         }

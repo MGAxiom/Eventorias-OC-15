@@ -8,4 +8,5 @@ sealed interface Screen : NavKey {
     @Serializable data object Main : Screen
     @Serializable data object EventCreation : Screen
     @Serializable data class EventDetails(val eventId: String) : Screen
+    @Serializable data object EmailLogin : Screen
 }

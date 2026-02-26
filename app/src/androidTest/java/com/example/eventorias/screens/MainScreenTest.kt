@@ -6,8 +6,10 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.example.domain.model.Evento
 import com.example.eventorias.fake.FakeEventViewModel
 import com.example.eventorias.fake.FakeUserProfileViewModel
 import com.example.eventorias.ui.model.EventUiState
@@ -21,6 +23,7 @@ import org.junit.runner.RunWith
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import org.koin.test.KoinTestRule
+import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 class MainScreenTest {
@@ -84,5 +87,30 @@ class MainScreenTest {
         }
         composeTestRule.onNodeWithText("Profile").performClick()
         composeTestRule.onNodeWithContentDescription("Add").assertDoesNotExist()
+    }
+
+    @Test
+    fun whenSearchingForEvent_onlyMatchingEventsShouldBeVisible() {
+        val events = listOf(
+            Evento(id = "1", name = "Cool Event", date = Date().time, description = "", photoUrl = "", location = ""),
+            Evento(id = "2", name = "Another Event", date = Date().time, description = "", photoUrl = "", location = "")
+        )
+        fakeEventViewModel.setUiState(EventUiState.Success(events))
+
+        composeTestRule.setContent {
+            MainScreen(
+                onNavigateToEventCreation = {},
+                onNavigateToEventDetails = {}
+            )
+        }
+
+        composeTestRule.onNodeWithText("Cool Event").assertExists()
+        composeTestRule.onNodeWithText("Another Event").assertExists()
+
+        composeTestRule.onNodeWithContentDescription("Search").performClick()
+        composeTestRule.onNodeWithText("Search events by name...").performTextInput("Cool")
+
+        composeTestRule.onNodeWithText("Cool Event").assertExists()
+        composeTestRule.onNodeWithText("Another Event").assertDoesNotExist()
     }
 }

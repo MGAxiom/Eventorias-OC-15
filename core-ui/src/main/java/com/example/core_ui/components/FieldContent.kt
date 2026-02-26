@@ -61,7 +61,7 @@ fun LabelContent(
                             Text(
                                 text = placeholder,
                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = Color.Gray
+                                    color = Color(0xFFBFBBC7)
                                 )
                             )
                         }

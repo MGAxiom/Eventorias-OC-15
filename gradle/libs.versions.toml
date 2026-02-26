@@ -22,6 +22,7 @@ mockk = "1.13.12"
 robolectric = "4.16.1"
 turbine = "1.1.0"
 archCoreTesting = "2.2.0"
+datastore = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +59,9 @@ robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectr
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCoreTesting" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

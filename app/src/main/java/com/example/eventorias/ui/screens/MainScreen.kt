@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.example.core_kt.utils.filterEvents
 import com.example.core_ui.components.EventTopBar
 import com.example.eventorias.R
 import com.example.eventorias.ui.model.EventUiState
@@ -116,17 +117,7 @@ fun MainScreen(
 
                     is EventUiState.Success -> {
                         val allEvents = (uiState as EventUiState.Success).events
-
-                        val filteredEvents = allEvents
-                            .filter { event ->
-                                if (searchQuery.isEmpty()) {
-                                    true
-                                } else {
-                                    event.name.contains(searchQuery, ignoreCase = true)
-                                }
-                            }
-                            .sortedBy { event -> event.date }
-                            .let { if (sortDescending) it.reversed() else it }
+                        val filteredEvents = filterEvents(allEvents, searchQuery, sortDescending)
 
                         EventListScreen(
                             modifier = modifier,
@@ -150,9 +141,7 @@ fun MainScreen(
             }
 
             MainTab.Profile -> {
-                Box(modifier = modifier) {
-                    UserProfileScreen()
-                }
+                UserProfileScreen()
             }
         }
     }

@@ -3,10 +3,13 @@ package com.example.eventorias.ui.viewmodel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import com.example.domain.model.User
+import com.example.domain.usecase.AreNotificationsEnabledUseCase
 import com.example.domain.usecase.GetCurrentUserUseCase
+import com.example.domain.usecase.SetNotificationsEnabledUseCase
 import com.example.domain.usecase.UpdateUserNameUseCase
 import com.example.domain.usecase.UpdateUserProfilePhotoUseCase
 import com.example.eventorias.ui.model.ProfileUiState
+import com.google.android.play.integrity.internal.a
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -37,6 +40,8 @@ class UserProfileViewModelTest {
     private lateinit var getCurrentUserUseCase: GetCurrentUserUseCase
     private lateinit var updateUserProfilePhotoUseCase: UpdateUserProfilePhotoUseCase
     private lateinit var updateUserNameUseCase: UpdateUserNameUseCase
+    private lateinit var setNotificationsEnabledUseCase: SetNotificationsEnabledUseCase
+    private lateinit var areNotificationsEnabledUseCase: AreNotificationsEnabledUseCase
     private lateinit var viewModel: UserProfileViewModelImpl
 
     @Before
@@ -56,7 +61,9 @@ class UserProfileViewModelTest {
         return UserProfileViewModelImpl(
             getCurrentUserUseCase = getCurrentUserUseCase,
             updateUserProfilePhotoUseCase = updateUserProfilePhotoUseCase,
-            updateUserNameUseCase = updateUserNameUseCase
+            updateUserNameUseCase = updateUserNameUseCase,
+            setNotificationsEnabledUseCase = setNotificationsEnabledUseCase,
+            areNotificationsEnabledUseCase = areNotificationsEnabledUseCase
         )
     }
 
