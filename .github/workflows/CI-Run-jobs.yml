@@ -165,4 +165,32 @@ jobs:
     needs: [ unit-tests, instrumented-tests, sonarcloud ]
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - name: Checkou
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Create google-services.json
+        env:
+          GOOGLE_SERVICES_CONTENT: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$GOOGLE_SERVICES_CONTENT" > app/google-services.json
+
+      - name: Create apikey.properties
+        env:
+          APIKEY_PROPERTIES_CONTENT: ${{ secrets.APIKEY_PROPERTIES }}
+        run: echo "$APIKEY_PROPERTIES_CONTENT" > apikey.properties
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      - name: Deploy to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+          groups: testers
+          file: app/build/outputs/apk/release/app-release.apk
