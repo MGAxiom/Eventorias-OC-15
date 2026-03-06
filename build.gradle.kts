@@ -22,7 +22,7 @@ tasks.register<org.gradle.testing.jacoco.tasks.JacocoReport>("jacocoTestReportAl
 
     dependsOn(androidSubprojects.map { project ->
         project.tasks.named("testDebugUnitTest")
-    }, project(":app").tasks.named("connectedDebugAndroidTest"))
+    })
 
     reports {
         xml.required.set(true)
@@ -58,8 +58,6 @@ tasks.register<org.gradle.testing.jacoco.tasks.JacocoReport>("jacocoTestReportAl
         project.fileTree("build") {
             include("outputs/unit_test_code_coverage/debugUnitTest/*.exec")
         }
-    }, project(":app").fileTree("build") {
-        include("outputs/code_coverage/debugAndroidTest/connected/**/*.ec")
     })
     executionData.setFrom(executionDataFiles)
 }
