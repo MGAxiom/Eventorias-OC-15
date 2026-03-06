@@ -123,6 +123,17 @@ jobs:
       - name: Run tests and generate coverage report
         run: ./gradlew testDebugUnitTest jacocoTestReportAll
 
+      - name: Debug coverage files       # <-- ADD THIS STEP HERE
+        run: |
+          echo "=== Jacoco exec files ==="
+          find . -name "*.exec" -o -name "*.ec" | head -20
+          echo "=== Jacoco XML reports ==="
+          find . -name "jacocoTestReport*.xml" | head -20
+          echo "=== Kotlin class files ==="
+          find . -path "*/tmp/kotlin-classes/debug*" -name "*.class" | head -20
+          echo "=== Build outputs ==="
+          find . -path "*/build/outputs/unit_test_code_coverage*" | head -20
+
       - name: Analyze with SonarCloud
         uses: sonarsource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602  # v6.0.0
         env:
