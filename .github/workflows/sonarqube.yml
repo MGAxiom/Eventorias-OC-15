@@ -54,5 +54,5 @@ jobs:
           SONAR_HOST_URL: "https://sonarcloud.io"
         with:
           args: >
-            -Dsonar.projectKey=Eventorias-OC-15
+            -Dsonar.projectKey=MGAxiom_Eventorias-OC-15
             -Dsonar.organization=mgaxiom
