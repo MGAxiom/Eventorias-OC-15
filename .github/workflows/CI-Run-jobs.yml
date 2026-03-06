@@ -119,7 +119,7 @@ jobs:
         run: echo "$APIKEY_PROPERTIES_CONTENT" > apikey.properties
 
       - name: Analyze with SonarCloud
-        uses: sonarsource/sonarqube-scan-action@a1d99b4f6a7f9a0b0baf5120a0610b4bea8e1e8b  # v6.0.0
+        uses: sonarsource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602  # v6.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -131,7 +131,7 @@ jobs:
             -Dsonar.qualitygate.wait=true
 
       - name: Check Quality Gate
-        uses: sonarsource/sonarqube-quality-gate-action@c8e6c6f1d9bbdd3b1f4e8c6f8e7a7c2e3c1c4d7f  # v1.1.0
+        uses: sonarsource/sonarqube-quality-gate-action@d304d050d930b02a896b0f85935344f023928496  # v1.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: "https://sonarcloud.io"
@@ -164,7 +164,7 @@ jobs:
         run: ./gradlew assembleRelease
 
       - name: Deploy to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@e1b3f0c1c2a1d5b9d9e7e1b6c4f0d5e7a2c3b1f9  # v1
+        uses: wzieba/Firebase-Distribution-Github-Action@bd494989dd4bec0343f78adee87fe66e48279ad6  # v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
