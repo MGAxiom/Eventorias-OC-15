@@ -53,15 +53,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Create google-services.json
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > app/google-services.json
+
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
-
-      - name: Upload unit test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit-test-results
-          path: '**/build/reports/tests/'
 
   instrumented-tests:
     runs-on: ubuntu-latest
@@ -76,6 +73,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      - name: Create google-services.json
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > app/google-services.json
 
       - name: Enable KVM
         run: |
