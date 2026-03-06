@@ -27,8 +27,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "com.example.eventorias.TestRunner"
-        
-        buildConfigField("String", "GOOGLE_API_KEY", googleApiKey)
+
+        buildConfigField("String", "GOOGLE_API_KEY", "\"$googleApiKey\"")
     }
 
     buildTypes {
