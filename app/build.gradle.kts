@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     id("com.google.gms.google-services")
+    id("jacoco")
 }
 
 val apikeyProperties = Properties()
@@ -34,6 +35,7 @@ android {
     buildTypes {
         debug {
             enableAndroidTestCoverage = true
+            enableUnitTestCoverage = true
         }
         release {
             isMinifyEnabled = false
@@ -59,6 +61,13 @@ android {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
         }
+    }
+}
+
+tasks.withType<Test> {
+    configure<JacocoTaskExtension> {
+        isIncludeNoLocationClasses = true
+        excludes = listOf("jdk.internal.*")
     }
 }
 

@@ -17,7 +17,7 @@ tasks.register<org.gradle.testing.jacoco.tasks.JacocoReport>("jacocoTestReportAl
     doNotTrackState("Workaround for JaCoCo and Gradle state tracking issue")
 
     val androidSubprojects = subprojects.filter {
-        it.name in listOf("app", "core-ui", "data", "domain")
+        it.name in listOf("app", "core-kt", "core-ui", "data", "domain")
     }
 
     dependsOn(androidSubprojects.map { project ->

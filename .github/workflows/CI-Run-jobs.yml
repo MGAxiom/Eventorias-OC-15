@@ -102,10 +102,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 17
+      - name: Set up JDK 17 and 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: |
+            17
+            21
           distribution: 'temurin'
 
       - name: Create google-services.json
@@ -118,6 +120,9 @@ jobs:
           APIKEY_PROPERTIES_CONTENT: ${{ secrets.APIKEY_PROPERTIES }}
         run: echo "$APIKEY_PROPERTIES_CONTENT" > apikey.properties
 
+      - name: Run tests and generate coverage report
+        run: ./gradlew testDebugUnitTest jacocoTestReportAll
+
       - name: Analyze with SonarCloud
         uses: sonarsource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602  # v6.0.0
         env:
@@ -129,6 +134,7 @@ jobs:
             -Dsonar.projectKey=MGAxiom_Eventorias-OC-15
             -Dsonar.organization=mgaxiom
             -Dsonar.qualitygate.wait=true
+            -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml
 
       - name: Check Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@d304d050d930b02a896b0f85935344f023928496  # v1.1.0
