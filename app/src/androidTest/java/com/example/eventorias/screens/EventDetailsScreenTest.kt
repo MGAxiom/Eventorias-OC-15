@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.eventorias.ui.model.EventDetailsUiState
 import com.example.eventorias.ui.screens.EventDetailsScreen
@@ -60,7 +61,10 @@ class EventDetailsScreenTest {
         composeTestRule.setContent {
             EventDetailsScreen(uiState = sampleState)
         }
-        composeTestRule.onNodeWithText("123 Main St, Paris").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("123 Main St, Paris")
+            .performScrollTo()
+            .assertIsDisplayed()
     }
 
     @Test
