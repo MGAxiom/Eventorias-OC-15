@@ -16,6 +16,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -50,6 +51,11 @@ class UserProfileViewModelTest {
         getCurrentUserUseCase = mockk()
         updateUserProfilePhotoUseCase = mockk()
         updateUserNameUseCase = mockk()
+        setNotificationsEnabledUseCase = mockk()
+        areNotificationsEnabledUseCase = mockk()
+
+        coEvery { areNotificationsEnabledUseCase() } returns flowOf(true)
+        coEvery { setNotificationsEnabledUseCase(any()) } returns Result.success(Unit)
     }
 
     @After

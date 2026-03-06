@@ -26,7 +26,7 @@ class EventDetailsScreenTest {
         date = "July 20, 2024",
         time = "10:00 AM",
         imageUrl = null,
-        mapImageUrl = "",
+        mapImageUrl = "https://example.com/map.jpg",
         authorImageUrl = null
     )
 
