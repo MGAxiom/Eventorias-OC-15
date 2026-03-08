@@ -11,14 +11,11 @@ class GoogleMapStaticRepositoryImplTest {
 
     @Test
     fun `getStaticMapUrl should return valid url with parameters`() {
-        // Given
         val address = "1600 Amphitheatre Parkway, Mountain View, CA"
         val encodedAddress = URLEncoder.encode(address, "UTF-8")
 
-        // When
         val url = repository.getStaticMapUrl(address)
 
-        // Then
         assertTrue(url.contains("center=$encodedAddress"))
         assertTrue(url.contains("zoom=15"))
         assertTrue(url.contains("size=400x400"))

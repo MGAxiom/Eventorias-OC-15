@@ -22,27 +22,21 @@ class GetCurrentUserUseCaseTest {
 
     @Test
     fun `invoke should return user from repository`() {
-        // Given
         val user = User(uid = "user123", displayName = "Test User")
         every { authRepository.getCurrentUser() } returns user
 
-        // When
         val result = getCurrentUserUseCase()
 
-        // Then
         assertEquals(user, result)
         verify(exactly = 1) { authRepository.getCurrentUser() }
     }
 
     @Test
     fun `invoke should return null when no user is logged in`() {
-        // Given
         every { authRepository.getCurrentUser() } returns null
 
-        // When
         val result = getCurrentUserUseCase()
 
-        // Then
         assertEquals(null, result)
         verify(exactly = 1) { authRepository.getCurrentUser() }
     }

@@ -8,19 +8,15 @@ class UpdateDateTest {
 
     @Test
     fun `updateEventDateTime should update date part correctly`() {
-        // Given - Start with January 15, 2024 at 10:30
         val originalCalendar = Calendar.getInstance()
         originalCalendar.set(2024, Calendar.JANUARY, 15, 10, 30, 0)
         originalCalendar.set(Calendar.MILLISECOND, 0)
         val originalMillis = originalCalendar.timeInMillis
 
-        // New date: March 20, 2024
         val newDateString = "20/03/2024"
 
-        // When
         val updatedMillis = updateEventDateTime(originalMillis, newDateString, DateTimePart.DATE)
 
-        // Then - Date should be updated, time should remain the same
         val resultCalendar = Calendar.getInstance()
         resultCalendar.timeInMillis = updatedMillis
 
@@ -33,19 +29,15 @@ class UpdateDateTest {
 
     @Test
     fun `updateEventDateTime should update time part correctly`() {
-        // Given - Start with January 15, 2024 at 10:30
         val originalCalendar = Calendar.getInstance()
         originalCalendar.set(2024, Calendar.JANUARY, 15, 10, 30, 0)
         originalCalendar.set(Calendar.MILLISECOND, 0)
         val originalMillis = originalCalendar.timeInMillis
 
-        // New time: 18:45
         val newTimeString = "18:45"
 
-        // When
         val updatedMillis = updateEventDateTime(originalMillis, newTimeString, DateTimePart.TIME)
 
-        // Then - Time should be updated, date should remain the same
         val resultCalendar = Calendar.getInstance()
         resultCalendar.timeInMillis = updatedMillis
 
@@ -60,55 +52,43 @@ class UpdateDateTest {
 
     @Test
     fun `updateEventDateTime should handle invalid date format gracefully`() {
-        // Given
         val originalCalendar = Calendar.getInstance()
         originalCalendar.set(2024, Calendar.JANUARY, 15, 10, 30, 0)
         originalCalendar.set(Calendar.MILLISECOND, 0)
         val originalMillis = originalCalendar.timeInMillis
 
-        // Invalid date format
         val invalidDateString = "invalid-date"
 
-        // When
         val updatedMillis = updateEventDateTime(originalMillis, invalidDateString, DateTimePart.DATE)
 
-        // Then - Original date should remain unchanged
         assertEquals(originalMillis, updatedMillis)
     }
 
     @Test
     fun `updateEventDateTime should handle invalid time format gracefully`() {
-        // Given
         val originalCalendar = Calendar.getInstance()
         originalCalendar.set(2024, Calendar.JANUARY, 15, 10, 30, 0)
         originalCalendar.set(Calendar.MILLISECOND, 0)
         val originalMillis = originalCalendar.timeInMillis
 
-        // Invalid time format
         val invalidTimeString = "invalid-time"
 
-        // When
         val updatedMillis = updateEventDateTime(originalMillis, invalidTimeString, DateTimePart.TIME)
 
-        // Then - Original time should remain unchanged
         assertEquals(originalMillis, updatedMillis)
     }
 
     @Test
     fun `updateEventDateTime should set seconds and milliseconds to zero when updating time`() {
-        // Given
         val originalCalendar = Calendar.getInstance()
         originalCalendar.set(2024, Calendar.JANUARY, 15, 10, 30, 45)
         originalCalendar.set(Calendar.MILLISECOND, 500)
         val originalMillis = originalCalendar.timeInMillis
 
-        // New time
         val newTimeString = "14:15"
 
-        // When
         val updatedMillis = updateEventDateTime(originalMillis, newTimeString, DateTimePart.TIME)
 
-        // Then
         val resultCalendar = Calendar.getInstance()
         resultCalendar.timeInMillis = updatedMillis
 

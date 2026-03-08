@@ -14,16 +14,13 @@ class UploadImageUseCaseTest {
 
     @Test
     fun `invoke should return image url from repository`() = runTest {
-        // Given
         val uri = "content://media/external/images/media/1"
         val userId = "user123"
         val expectedUrl = "https://firebasestorage.googleapis.com/v0/b/app/o/user123%2Fprofile.jpg"
         coEvery { repository.uploadImage(uri, userId) } returns expectedUrl
 
-        // When
         val result = useCase(uri, userId)
 
-        // Then
         assertEquals(expectedUrl, result)
     }
 }

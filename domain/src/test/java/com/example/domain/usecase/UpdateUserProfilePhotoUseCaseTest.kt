@@ -26,7 +26,6 @@ class UpdateUserProfilePhotoUseCaseTest {
 
     @Test
     fun `invoke should upload image and update auth profile successfully`() = runTest {
-        // Given
         val imageUri = "content://test/image.jpg"
         val userId = "user123"
         val photoUrl = "https://storage.firebase.com/image.jpg"
@@ -34,10 +33,8 @@ class UpdateUserProfilePhotoUseCaseTest {
         coEvery { imageRepository.uploadImage(imageUri, userId) } returns photoUrl
         coEvery { authRepository.updateUserProfile(photoUrl = photoUrl) } returns Result.success(Unit)
 
-        // When
         val result = updateUserProfilePhotoUseCase(imageUri, userId)
 
-        // Then
         assertTrue(result.isSuccess)
         assertEquals(photoUrl, result.getOrNull())
         coVerify(exactly = 1) { imageRepository.uploadImage(imageUri, userId) }

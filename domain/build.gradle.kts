@@ -17,7 +17,7 @@ android {
         debug {
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
         }
     }
 

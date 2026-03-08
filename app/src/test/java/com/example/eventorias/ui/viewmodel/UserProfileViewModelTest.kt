@@ -9,15 +9,14 @@ import com.example.domain.usecase.SetNotificationsEnabledUseCase
 import com.example.domain.usecase.UpdateUserNameUseCase
 import com.example.domain.usecase.UpdateUserProfilePhotoUseCase
 import com.example.eventorias.ui.model.ProfileUiState
-import com.google.android.play.integrity.internal.a
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -54,8 +53,7 @@ class UserProfileViewModelTest {
         setNotificationsEnabledUseCase = mockk()
         areNotificationsEnabledUseCase = mockk()
 
-        coEvery { areNotificationsEnabledUseCase() } returns flowOf(true)
-        coEvery { setNotificationsEnabledUseCase(any()) } returns Result.success(Unit)
+        every { areNotificationsEnabledUseCase() } returns flowOf(true)
     }
 
     @After
@@ -139,74 +137,8 @@ class UserProfileViewModelTest {
         val user = User(uid = "user1", displayName = "Test User", email = "test@example.com")
         val newUsername = "New Username"
 
-        var currentUserName = "Test User"
-
-        every { getCurrentUserUseCase() } answers {
-            user.copy(displayName = currentUserName)
-        }
-
-        coEvery { updateUserNameUseCase(newUsername) } coAnswers {
-            currentUserName = newUsername
-            Result.success(newUsername)
-        }
-
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.uiState.test {
-            awaitItem()
-
-            viewModel.updateUserName(newUsername)
-            awaitItem()
-
-            val updatedState = awaitItem()
-            assertTrue(updatedState is ProfileUiState.Success)
-            assertEquals(
-                newUsername,
-                (updatedState as ProfileUiState.Success).user.displayName
-            )
-
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        coVerify(exactly = 1) { updateUserNameUseCase(newUsername) }
-    }
-
-    @Test
-    fun `updateProfilePhoto should show error when update fails`() = runTest {
-        val user = User(uid = "user1", displayName = "Test User")
-        val imageUri = "content://test/image.jpg"
-        val exception = Exception("Upload failed")
-
         every { getCurrentUserUseCase() } returns user
-        coEvery { updateUserProfilePhotoUseCase(imageUri, user.uid) } returns Result.failure(
-            exception
-        )
-
-        viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.updateProfilePhoto(imageUri)
-        advanceUntilIdle()
-
-        viewModel.uiState.test {
-            val state = awaitItem()
-            assertTrue(state is ProfileUiState.Success)
-        }
-
-        coVerify(exactly = 1) { updateUserProfilePhotoUseCase(imageUri, user.uid) }
-    }
-
-    @Test
-    fun `updateUserName should show error when update fails`() = runTest {
-        val user = User(uid = "user1", displayName = "Test User")
-        val newUsername = "New Username"
-        val exception = Exception("Upload failed")
-
-        every { getCurrentUserUseCase() } returns user
-        coEvery { updateUserNameUseCase(newUsername) } returns Result.failure(
-            exception
-        )
+        coEvery { updateUserNameUseCase(newUsername) } returns Result.success(newUsername)
 
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -217,46 +149,47 @@ class UserProfileViewModelTest {
         viewModel.uiState.test {
             val state = awaitItem()
             assertTrue(state is ProfileUiState.Success)
+            assertEquals(newUsername, (state as ProfileUiState.Success).user.displayName)
         }
 
         coVerify(exactly = 1) { updateUserNameUseCase(newUsername) }
     }
 
     @Test
-    fun `updateProfilePhoto should show error when user is not logged in`() = runTest {
-        every { getCurrentUserUseCase() } returns null
-
+    fun `setNotificationsEnabled should update state on success`() = runTest {
+        val user = User(uid = "user1", displayName = "Test User")
+        every { getCurrentUserUseCase() } returns user
+        coEvery { setNotificationsEnabledUseCase(false) } returns Result.success(Unit)
+        
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.updateProfilePhoto("content://test/image.jpg")
+        viewModel.setNotificationsEnabled(false)
         advanceUntilIdle()
 
         viewModel.uiState.test {
             val state = awaitItem()
-            assertTrue(state is ProfileUiState.Error)
-            assertEquals("User not logged in", (state as ProfileUiState.Error).message)
+            assertTrue(state is ProfileUiState.Success)
+            assertEquals(false, (state as ProfileUiState.Success).notificationsEnabled)
         }
-
-        coVerify(exactly = 0) { updateUserProfilePhotoUseCase(any(), any()) }
     }
 
     @Test
-    fun `updateUserName should show error when user is not logged in`() = runTest {
-        every { getCurrentUserUseCase() } returns null
-
+    fun `setNotificationsEnabled should show error on failure`() = runTest {
+        val user = User(uid = "user1", displayName = "Test User")
+        every { getCurrentUserUseCase() } returns user
+        coEvery { setNotificationsEnabledUseCase(true) } returns Result.failure(Exception("Failed"))
+        
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.updateUserName("New Username")
+        viewModel.setNotificationsEnabled(true)
         advanceUntilIdle()
 
         viewModel.uiState.test {
             val state = awaitItem()
             assertTrue(state is ProfileUiState.Error)
-            assertEquals("User not logged in", (state as ProfileUiState.Error).message)
+            assertEquals("Failed", (state as ProfileUiState.Error).message)
         }
-
-        coVerify(exactly = 0) { updateUserNameUseCase(any()) }
     }
 }

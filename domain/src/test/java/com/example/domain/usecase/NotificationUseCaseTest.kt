@@ -17,27 +17,21 @@ class NotificationUseCaseTest {
 
     @Test
     fun `SetNotificationsEnabledUseCase should call repository`() = runTest {
-        // Given
         val enabled = true
         coEvery { repository.setNotificationsEnabled(enabled) } returns Result.success(Unit)
 
-        // When
         val result = setNotificationsEnabledUseCase(enabled)
 
-        // Then
         assertEquals(Result.success(Unit), result)
     }
 
     @Test
     fun `AreNotificationsEnabledUseCase should return flow from repository`() = runTest {
-        // Given
         val enabledFlow = flowOf(true)
         every { repository.areNotificationsEnabled() } returns enabledFlow
 
-        // When
         val result = areNotificationsEnabledUseCase()
 
-        // Then
         assertEquals(enabledFlow, result)
     }
 }

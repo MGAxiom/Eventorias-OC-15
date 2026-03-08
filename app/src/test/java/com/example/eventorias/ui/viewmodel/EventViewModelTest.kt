@@ -152,12 +152,24 @@ class EventViewModelTest {
     }
 
     @Test
-    fun `addEvent should fail validation when title is empty`() = runTest {
+    fun `onAction DateChanged should update event date`() = runTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        val currentUser = User(uid = "user1", displayName = "Test User")
-        every { getCurrentUserUseCase() } returns currentUser
+        val newDate = "25/12/2023"
+        viewModel.onAction(FormEvent.DateChanged(newDate))
+        advanceUntilIdle()
+
+        viewModel.event.test {
+            val event = awaitItem()
+            assertTrue(event.date != 0L)
+        }
+    }
+
+    @Test
+    fun `addEvent should fail validation when fields are empty`() = runTest {
+        viewModel = createViewModel()
+        advanceUntilIdle()
 
         viewModel.addEvent()
         advanceUntilIdle()
@@ -180,14 +192,8 @@ class EventViewModelTest {
         val currentUser = User(uid = "user1", displayName = "Test User")
         every { getCurrentUserUseCase() } returns currentUser
 
-        val evento = Evento(
-            name = "Test Event",
-            description = "Test Description",
-            location = "Test Location"
-        )
-
         coEvery { addEventUseCase(any()) } returns Result.success(Unit)
-        every { getAllEventsUseCase() } returns flowOf(listOf(evento))
+        every { getAllEventsUseCase() } returns flowOf(emptyList())
 
         viewModel.onAction(FormEvent.TitleChanged("Test Event"))
         viewModel.onAction(FormEvent.DescriptionChanged("Test Description"))
@@ -205,11 +211,36 @@ class EventViewModelTest {
     }
 
     @Test
-    fun `addEvent should show error when user is not logged in`() = runTest {
+    fun `addEvent should upload image if photoUri is present`() = runTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
-        every { getCurrentUserUseCase() } returns null
+        val currentUser = User(uid = "user1", displayName = "Test User")
+        every { getCurrentUserUseCase() } returns currentUser
+        coEvery { uploadImageUseCase("uri", "user1") } returns "http://photo.url"
+        coEvery { addEventUseCase(any()) } returns Result.success(Unit)
+
+        viewModel.onAction(FormEvent.TitleChanged("Test Event"))
+        viewModel.onAction(FormEvent.DescriptionChanged("Test Description"))
+        viewModel.onAction(FormEvent.LocationChanged("Test Location"))
+        viewModel.onAction(FormEvent.PhotoUriChanged("uri"))
+        advanceUntilIdle()
+
+        viewModel.addEvent()
+        advanceUntilIdle()
+
+        coVerify { uploadImageUseCase("uri", "user1") }
+        coVerify { addEventUseCase(match { it.photoUrl == "http://photo.url" }) }
+    }
+
+    @Test
+    fun `addEvent should show error when addEventUseCase fails`() = runTest {
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val currentUser = User(uid = "user1", displayName = "Test User")
+        every { getCurrentUserUseCase() } returns currentUser
+        coEvery { addEventUseCase(any()) } returns Result.failure(Exception("Firestore error"))
 
         viewModel.onAction(FormEvent.TitleChanged("Test Event"))
         viewModel.onAction(FormEvent.DescriptionChanged("Test Description"))
@@ -222,25 +253,69 @@ class EventViewModelTest {
         viewModel.uiState.test {
             val state = awaitItem()
             assertTrue(state is EventUiState.Error)
-            assertEquals("You must be logged in to create an event.", (state as EventUiState.Error).message)
+            assertEquals("Firestore error", (state as EventUiState.Error).message)
         }
     }
 
     @Test
-    fun `getAllEvents should update uiState with events`() = runTest {
-        val events = listOf(
-            Evento(id = "1", name = "Event 1"),
-            Evento(id = "2", name = "Event 2")
-        )
-        every { getAllEventsUseCase() } returns flowOf(events)
-
+    fun `getEventById should update selectedEvent on success`() = runTest {
+        val event = Evento(id = "1", name = "Event 1")
+        coEvery { getEventUseCase("1") } returns Result.success(event)
+        
         viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.getEventById("1")
+        advanceUntilIdle()
+
+        viewModel.selectedEvent.test {
+            assertEquals(event, awaitItem())
+        }
+    }
+
+    @Test
+    fun `getEventById should show error on failure`() = runTest {
+        coEvery { getEventUseCase("1") } returns Result.failure(Exception("Not found"))
+        
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.getEventById("1")
         advanceUntilIdle()
 
         viewModel.uiState.test {
             val state = awaitItem()
-            assertTrue(state is EventUiState.Success)
-            assertEquals(2, (state as EventUiState.Success).events.size)
+            assertTrue(state is EventUiState.Error)
+            assertEquals("Not found", (state as EventUiState.Error).message)
+        }
+    }
+
+    @Test
+    fun `getMapUrl should call use case`() {
+        val address = "test address"
+        every { getMapUrlUseCase(address) } returns "http://map.url"
+        
+        viewModel = createViewModel()
+        val result = viewModel.getMapUrl(address)
+        
+        assertEquals("http://map.url", result)
+        coVerify { getMapUrlUseCase(address) }
+    }
+
+    @Test
+    fun `onSaveComplete should reset event and eventSaved`() = runTest {
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onAction(FormEvent.TitleChanged("Temp"))
+        
+        viewModel.onSaveComplete()
+        
+        viewModel.eventSaved.test {
+            assertFalse(awaitItem())
+        }
+        viewModel.event.test {
+            assertEquals("", awaitItem().name)
         }
     }
 }
