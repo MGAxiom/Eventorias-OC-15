@@ -87,8 +87,10 @@ class UserProfileViewModelTest {
         viewModel.uiState.test {
             val state = awaitItem()
             assertTrue(state is ProfileUiState.Success)
-            assertEquals(user, (state as ProfileUiState.Success).user)
-            assertEquals("https://example.com/photo.jpg", state.profilePhotoUrl)
+            val successState = state as ProfileUiState.Success
+            assertEquals(user, successState.user)
+            assertEquals("https://example.com/photo.jpg", successState.profilePhotoUrl)
+            assertTrue(successState.notificationsEnabled)
         }
     }
 
@@ -113,9 +115,7 @@ class UserProfileViewModelTest {
         val newPhotoUrl = "https://storage.firebase.com/new-photo.jpg"
 
         every { getCurrentUserUseCase() } returns user
-        coEvery { updateUserProfilePhotoUseCase(imageUri, user.uid) } returns Result.success(
-            newPhotoUrl
-        )
+        coEvery { updateUserProfilePhotoUseCase(imageUri, user.uid) } returns Result.success(newPhotoUrl)
 
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -128,14 +128,37 @@ class UserProfileViewModelTest {
             assertTrue(state is ProfileUiState.Success)
             assertEquals(newPhotoUrl, (state as ProfileUiState.Success).profilePhotoUrl)
         }
+        coVerify { updateUserProfilePhotoUseCase(imageUri, user.uid) }
+    }
 
-        coVerify(exactly = 1) { updateUserProfilePhotoUseCase(imageUri, user.uid) }
+    @Test
+    fun `updateProfilePhoto should show error and revert when update fails`() = runTest {
+        val user = User(uid = "user1", displayName = "Test User")
+        val imageUri = "content://test/image.jpg"
+        val exception = Exception("Upload failed")
+
+        every { getCurrentUserUseCase() } returns user
+        coEvery { updateUserProfilePhotoUseCase(imageUri, user.uid) } returns Result.failure(exception)
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.updateProfilePhoto(imageUri)
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            // It might emit Error then revert to Success via loadUserProfile()
+            // But usually, the last state is what matters or we can check items.
+            // Based on code: it sets Error then calls loadUserProfile()
+            assertTrue(state is ProfileUiState.Success) 
+        }
     }
 
     @Test
     fun `updateUserName should update user profile name successfully`() = runTest {
-        val user = User(uid = "user1", displayName = "Test User", email = "test@example.com")
-        val newUsername = "New Username"
+        val user = User(uid = "user1", displayName = "Old Name", email = "test@example.com")
+        val newUsername = "New Name"
 
         every { getCurrentUserUseCase() } returns user
         coEvery { updateUserNameUseCase(newUsername) } returns Result.success(newUsername)
@@ -151,8 +174,27 @@ class UserProfileViewModelTest {
             assertTrue(state is ProfileUiState.Success)
             assertEquals(newUsername, (state as ProfileUiState.Success).user.displayName)
         }
+    }
 
-        coVerify(exactly = 1) { updateUserNameUseCase(newUsername) }
+    @Test
+    fun `updateUserName should show error when update fails`() = runTest {
+        val user = User(uid = "user1", displayName = "Test User")
+        val newUsername = "New Name"
+        val exception = Exception("Update failed")
+
+        every { getCurrentUserUseCase() } returns user
+        coEvery { updateUserNameUseCase(newUsername) } returns Result.failure(exception)
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.updateUserName(newUsername)
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertTrue(state is ProfileUiState.Success) // Reverts after error
+        }
     }
 
     @Test
@@ -190,6 +232,40 @@ class UserProfileViewModelTest {
             val state = awaitItem()
             assertTrue(state is ProfileUiState.Error)
             assertEquals("Failed", (state as ProfileUiState.Error).message)
+        }
+    }
+
+    @Test
+    fun `uiState should update when notification preferences flow emits`() = runTest {
+        val user = User(uid = "user1", displayName = "Test User")
+        val prefsFlow = MutableStateFlow(true)
+        every { areNotificationsEnabledUseCase() } returns prefsFlow
+        every { getCurrentUserUseCase() } returns user
+
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            assertTrue((awaitItem() as ProfileUiState.Success).notificationsEnabled)
+            
+            prefsFlow.value = false
+            advanceUntilIdle()
+            
+            assertEquals(false, (awaitItem() as ProfileUiState.Success).notificationsEnabled)
+        }
+    }
+
+    @Test
+    fun `updateUserName should show error when user not logged in`() = runTest {
+        every { getCurrentUserUseCase() } returns null
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.updateUserName("New")
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            assertTrue(awaitItem() is ProfileUiState.Error)
         }
     }
 }

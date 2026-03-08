@@ -27,6 +27,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -138,6 +139,20 @@ class EventViewModelTest {
     }
 
     @Test
+    fun `onAction DescriptionChanged with empty string should show validation error`() = runTest {
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onAction(FormEvent.DescriptionChanged(""))
+        advanceUntilIdle()
+
+        viewModel.validationErrors.test {
+            val errors = awaitItem()
+            assertTrue(errors.containsKey("description"))
+        }
+    }
+
+    @Test
     fun `onAction LocationChanged should update event location`() = runTest {
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -152,12 +167,41 @@ class EventViewModelTest {
     }
 
     @Test
+    fun `onAction LocationChanged with empty string should show validation error`() = runTest {
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onAction(FormEvent.LocationChanged(""))
+        advanceUntilIdle()
+
+        viewModel.validationErrors.test {
+            val errors = awaitItem()
+            assertTrue(errors.containsKey("address"))
+        }
+    }
+
+    @Test
     fun `onAction DateChanged should update event date`() = runTest {
         viewModel = createViewModel()
         advanceUntilIdle()
 
         val newDate = "25/12/2023"
         viewModel.onAction(FormEvent.DateChanged(newDate))
+        advanceUntilIdle()
+
+        viewModel.event.test {
+            val event = awaitItem()
+            assertTrue(event.date != 0L)
+        }
+    }
+
+    @Test
+    fun `onAction TimeChanged should update event time`() = runTest {
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val newTime = "14:30"
+        viewModel.onAction(FormEvent.TimeChanged(newTime))
         advanceUntilIdle()
 
         viewModel.event.test {
@@ -234,6 +278,28 @@ class EventViewModelTest {
     }
 
     @Test
+    fun `addEvent should show error when user is not logged in`() = runTest {
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        every { getCurrentUserUseCase() } returns null
+
+        viewModel.onAction(FormEvent.TitleChanged("Test Event"))
+        viewModel.onAction(FormEvent.DescriptionChanged("Test Description"))
+        viewModel.onAction(FormEvent.LocationChanged("Test Location"))
+        advanceUntilIdle()
+
+        viewModel.addEvent()
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertTrue(state is EventUiState.Error)
+            assertEquals("You must be logged in to create an event.", (state as EventUiState.Error).message)
+        }
+    }
+
+    @Test
     fun `addEvent should show error when addEventUseCase fails`() = runTest {
         viewModel = createViewModel()
         advanceUntilIdle()
@@ -254,6 +320,30 @@ class EventViewModelTest {
             val state = awaitItem()
             assertTrue(state is EventUiState.Error)
             assertEquals("Firestore error", (state as EventUiState.Error).message)
+        }
+    }
+
+    @Test
+    fun `addEvent should handle exception during execution`() = runTest {
+        viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val currentUser = User(uid = "user1", displayName = "Test User")
+        every { getCurrentUserUseCase() } returns currentUser
+        coEvery { addEventUseCase(any()) } throws RuntimeException("Unexpected error")
+
+        viewModel.onAction(FormEvent.TitleChanged("Test Event"))
+        viewModel.onAction(FormEvent.DescriptionChanged("Test Description"))
+        viewModel.onAction(FormEvent.LocationChanged("Test Location"))
+        advanceUntilIdle()
+
+        viewModel.addEvent()
+        advanceUntilIdle()
+
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertTrue(state is EventUiState.Error)
+            assertEquals("Unexpected error", (state as EventUiState.Error).message)
         }
     }
 
@@ -315,7 +405,10 @@ class EventViewModelTest {
             assertFalse(awaitItem())
         }
         viewModel.event.test {
-            assertEquals("", awaitItem().name)
+            val event = awaitItem()
+            assertEquals("", event.name)
+            // It was fail because assertNull(event.id) but event.id default is "" not null
+            assertEquals("", event.id)
         }
     }
 }
