@@ -159,6 +159,8 @@ jobs:
           find . -name "*.exec" -o -name "*.ec" | grep -v build/tmp
           echo "=== Coverage report location ==="
           find . -name "jacocoTestReportAll.xml"
+          echo "=== Coverage XML content (counters only) ==="
+          grep -o 'type="[^"]*" missed="[^"]*" covered="[^"]*"' build/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml || echo "No counters found in XML"
 
       - name: Check overall coverage threshold
         run: |
@@ -167,6 +169,9 @@ jobs:
           tree = ET.parse('build/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml')
           root = tree.getroot()
           counters = {c.attrib['type']: c.attrib for c in root.findall('counter')}
+          print('Available counter types:', list(counters.keys()))
+          if 'LINE' not in counters:
+              raise SystemExit('ERROR: No LINE counter found - JaCoCo has no coverage data. Check that exec/ec files are being picked up by the Gradle task.')
           missed = int(counters['LINE']['missed'])
           covered = int(counters['LINE']['covered'])
           pct = (covered / (missed + covered)) * 100
