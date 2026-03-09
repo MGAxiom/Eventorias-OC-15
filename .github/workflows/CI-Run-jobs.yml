@@ -41,6 +41,15 @@ jobs:
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
 
+      - name: Debug exec file locations
+        run: |
+          echo "=== All .exec files ==="
+          find . -name "*.exec" 2>/dev/null || echo "No .exec files found"
+          echo "=== All .ec files ==="
+          find . -name "*.ec" 2>/dev/null || echo "No .ec files found"
+          echo "=== build/jacoco contents ==="
+          find . -path "*/build/jacoco*" 2>/dev/null || echo "No jacoco dir found"
+
       - name: Upload unit test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -53,6 +62,7 @@ jobs:
         with:
           name: unit-test-exec
           path: '**/build/jacoco/*.exec'
+          if-no-files-found: warn
 
   instrumented-tests:
     runs-on: ubuntu-latest
@@ -93,6 +103,15 @@ jobs:
           arch: x86_64
           script: ./gradlew connectedDebugAndroidTest
 
+      - name: Debug instrumented exec file locations
+        run: |
+          echo "=== All .exec files ==="
+          find . -name "*.exec" 2>/dev/null || echo "No .exec files found"
+          echo "=== All .ec files ==="
+          find . -name "*.ec" 2>/dev/null || echo "No .ec files found"
+          echo "=== code_coverage contents ==="
+          find . -path "*/build/outputs/code_coverage*" 2>/dev/null || echo "No code_coverage dir found"
+
       - name: Upload instrumented test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -105,6 +124,7 @@ jobs:
         with:
           name: instrumented-test-exec
           path: '**/build/outputs/code_coverage/**/*.ec'
+          if-no-files-found: warn
 
   sonarcloud:
     runs-on: ubuntu-latest
@@ -136,12 +156,14 @@ jobs:
         run: echo "$APIKEY_PROPERTIES_CONTENT" > apikey.properties
 
       - name: Download unit test exec files
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: unit-test-exec
           path: .
 
       - name: Download instrumented test exec files
+        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: instrumented-test-exec
@@ -152,9 +174,9 @@ jobs:
 
       - name: Debug coverage files
         run: |
-          echo "=== Exec files ==="
+          echo "=== All exec/ec files after download ==="
           find . -name "*.exec" -o -name "*.ec" | grep -v build/tmp
-          echo "=== Coverage report ==="
+          echo "=== Coverage report location ==="
           find . -name "jacocoTestReportAll.xml"
 
       - name: Check overall coverage threshold
