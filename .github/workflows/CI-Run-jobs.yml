@@ -135,6 +135,15 @@ jobs:
           echo "=== Class files for app ==="
           find ./app -path "*/tmp/kotlin-classes/debug*" -name "*.class" | head -10
 
+      - name: Set Sonar branch name
+        id: branch
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "name=main" >> $GITHUB_OUTPUT
+          else
+            echo "name=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Analyze with SonarCloud
         uses: sonarsource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602  # v6.0.0
         env:
@@ -148,6 +157,7 @@ jobs:
             -Dsonar.qualitygate.wait=true
             -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml
             -Dsonar.coverage.exclusions=**/EventFilterProcessor.kt
+            -Dsonar.branch.name=${{ steps.branch.outputs.name }}
 
       - name: Check Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@d304d050d930b02a896b0f85935344f023928496  # v1.1.0
