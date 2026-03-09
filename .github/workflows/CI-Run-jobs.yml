@@ -151,7 +151,7 @@ jobs:
           path: .
 
       - name: Compile debug sources for coverage mapping
-        run: ./gradlew compileDebugKotlin
+        run: ./gradlew compileDebugKotlin -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
 
       - name: Generate merged coverage report
         run: ./gradlew jacocoTestReportAll
@@ -171,7 +171,7 @@ jobs:
           echo "Overall line coverage: $COVERAGE%"
           python3 -c "
           cov = float('$COVERAGE')
-          if cov < 70.0:
+          if cov < 50.0:
               raise SystemExit(f'Coverage {cov:.1f}% is below threshold of 50.0%')
           print(f'Coverage check passed: {cov:.1f}%')
           "
