@@ -150,19 +150,20 @@ jobs:
           name: instrumented-test-exec
           path: .
 
+      - name: Compile debug sources for coverage mapping
+        run: ./gradlew compileDebugKotlin
+
       - name: Generate merged coverage report
-        run: ./gradlew jacocoTestReportAll --info 2>&1 | tee gradle-jacoco.log | grep -E "exec|\.ec|executionData|Skipping|UP-TO-DATE|No source|jacocoTestReportAll"
+        run: ./gradlew jacocoTestReportAll
 
       - name: Debug coverage files
         run: |
-          echo "=== All exec/ec files after download ==="
+          echo "=== All exec/ec files ==="
           find . -name "*.exec" -o -name "*.ec" | grep -v build/tmp
-          echo "=== Coverage report location ==="
-          find . -name "jacocoTestReportAll.xml"
+          echo "=== Class files ==="
+          find . -path "*/tmp/kotlin-classes/debug*" -name "*.class" | head -5
           echo "=== Coverage XML counters ==="
           grep -o 'type="[^"]*" missed="[^"]*" covered="[^"]*"' build/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml || echo "No counters found in XML"
-          echo "=== Full Gradle jacoco log ==="
-          cat gradle-jacoco.log | grep -E "exec|\.ec|execution|input|file" | head -50
 
       - name: Check overall coverage threshold
         run: |
