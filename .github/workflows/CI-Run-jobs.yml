@@ -94,15 +94,6 @@ jobs:
           arch: x86_64
           script: ./gradlew connectedDebugAndroidTest
 
-      - name: Debug instrumented exec file locations
-        run: |
-          echo "=== All .exec files ==="
-          find . -name "*.exec" 2>/dev/null || echo "No .exec files found"
-          echo "=== All .ec files ==="
-          find . -name "*.ec" 2>/dev/null || echo "No .ec files found"
-          echo "=== code_coverage contents ==="
-          find . -path "*/build/outputs/code_coverage*" 2>/dev/null || echo "No code_coverage dir found"
-
       - name: Upload instrumented test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -150,14 +141,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: unit-test-exec
-          path: app/build/outputs/unit_test_code_coverage/debugUnitTest/
+          path: .
 
       - name: Download instrumented test exec files
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: instrumented-test-exec
-          path: app/build/outputs/code_coverage/
+          path: .
 
       - name: Generate merged coverage report
         run: ./gradlew jacocoTestReportAll
