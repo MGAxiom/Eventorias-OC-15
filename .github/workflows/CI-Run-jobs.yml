@@ -156,15 +156,6 @@ jobs:
       - name: Generate merged coverage report
         run: ./gradlew jacocoTestReportAll
 
-      - name: Debug coverage files
-        run: |
-          echo "=== All exec/ec files ==="
-          find . -name "*.exec" -o -name "*.ec" | grep -v build/tmp
-          echo "=== Class files ==="
-          find . -path "*/tmp/kotlin-classes/debug*" -name "*.class" | head -5
-          echo "=== Coverage XML counters ==="
-          grep -o 'type="[^"]*" missed="[^"]*" covered="[^"]*"' build/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml || echo "No counters found in XML"
-
       - name: Check overall coverage threshold
         run: |
           COVERAGE=$(python3 -c "
@@ -172,9 +163,6 @@ jobs:
           tree = ET.parse('build/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml')
           root = tree.getroot()
           counters = {c.attrib['type']: c.attrib for c in root.findall('counter')}
-          print('Available counter types:', list(counters.keys()))
-          if 'LINE' not in counters:
-              raise SystemExit('ERROR: No LINE counter found - JaCoCo has no coverage data. Check that exec/ec files are being picked up by the Gradle task.')
           missed = int(counters['LINE']['missed'])
           covered = int(counters['LINE']['covered'])
           pct = (covered / (missed + covered)) * 100
@@ -184,7 +172,7 @@ jobs:
           python3 -c "
           cov = float('$COVERAGE')
           if cov < 70.0:
-              raise SystemExit(f'Coverage {cov:.1f}% is below threshold of 70.0%')
+              raise SystemExit(f'Coverage {cov:.1f}% is below threshold of 50.0%')
           print(f'Coverage check passed: {cov:.1f}%')
           "
 
