@@ -48,6 +48,12 @@ jobs:
           name: unit-test-results
           path: '**/build/reports/tests/'
 
+      - name: Upload unit test exec files
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-exec
+          path: '**/build/jacoco/*.exec'
+
   instrumented-tests:
     runs-on: ubuntu-latest
     permissions:
@@ -94,6 +100,12 @@ jobs:
           name: instrumented-test-results
           path: '**/build/reports/androidTests/'
 
+      - name: Upload instrumented test exec files
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-test-exec
+          path: '**/build/outputs/code_coverage/**/*.ec'
+
   sonarcloud:
     runs-on: ubuntu-latest
     needs: [ unit-tests, instrumented-tests ]
@@ -123,17 +135,27 @@ jobs:
           APIKEY_PROPERTIES_CONTENT: ${{ secrets.APIKEY_PROPERTIES }}
         run: echo "$APIKEY_PROPERTIES_CONTENT" > apikey.properties
 
-      - name: Run tests and generate coverage report
-        run: ./gradlew testDebugUnitTest jacocoTestReportAll
+      - name: Download unit test exec files
+        uses: actions/download-artifact@v4
+        with:
+          name: unit-test-exec
+          path: .
+
+      - name: Download instrumented test exec files
+        uses: actions/download-artifact@v4
+        with:
+          name: instrumented-test-exec
+          path: .
+
+      - name: Generate merged coverage report
+        run: ./gradlew jacocoTestReportAll
 
       - name: Debug coverage files
         run: |
           echo "=== Exec files ==="
-          find . -name "*.exec" | grep -v build/tmp
-          echo "=== Class files for core-kt ==="
-          find ./core-kt -path "*/tmp/kotlin-classes/debug*" -name "*.class" | head -10
-          echo "=== Class files for app ==="
-          find ./app -path "*/tmp/kotlin-classes/debug*" -name "*.class" | head -10
+          find . -name "*.exec" -o -name "*.ec" | grep -v build/tmp
+          echo "=== Coverage report ==="
+          find . -name "jacocoTestReportAll.xml"
 
       - name: Check overall coverage threshold
         run: |
