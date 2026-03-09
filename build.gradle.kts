@@ -47,10 +47,6 @@ val excludes = listOf(
 tasks.register<org.gradle.testing.jacoco.tasks.JacocoReport>("jacocoTestReportAll") {
     doNotTrackState("Workaround for JaCoCo and Gradle state tracking issue")
 
-    dependsOn(androidSubprojects.map { project ->
-        project.tasks.named("testDebugUnitTest")
-    })
-
     reports {
         xml.required.set(true)
         html.required.set(true)
@@ -75,7 +71,10 @@ tasks.register<org.gradle.testing.jacoco.tasks.JacocoReport>("jacocoTestReportAl
 
     val executionDataFiles = files(androidSubprojects.map { project ->
         project.fileTree("build") {
-            include("outputs/unit_test_code_coverage/debugUnitTest/*.exec")
+            include(
+                "outputs/unit_test_code_coverage/debugUnitTest/*.exec",
+                "outputs/code_coverage/debugAndroidTest/connected/**/*.ec"
+            )
         }
     })
     executionData.setFrom(executionDataFiles)
