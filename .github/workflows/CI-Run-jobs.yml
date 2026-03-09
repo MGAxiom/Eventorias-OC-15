@@ -135,6 +135,26 @@ jobs:
           echo "=== Class files for app ==="
           find ./app -path "*/tmp/kotlin-classes/debug*" -name "*.class" | head -10
 
+      - name: Check overall coverage threshold
+        run: |
+          COVERAGE=$(python3 -c "
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('build/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml')
+          root = tree.getroot()
+          counters = {c.attrib['type']: c.attrib for c in root.findall('counter')}
+          missed = int(counters['LINE']['missed'])
+          covered = int(counters['LINE']['covered'])
+          pct = (covered / (missed + covered)) * 100
+          print(f'{pct:.1f}')
+          ")
+          echo "Overall line coverage: $COVERAGE%"
+          python3 -c "
+          cov = float('$COVERAGE')
+          if cov < 70.0:
+              raise SystemExit(f'Coverage {cov:.1f}% is below threshold of 70.0%')
+          print(f'Coverage check passed: {cov:.1f}%')
+          "
+
       - name: Set Sonar branch name
         id: branch
         run: |
