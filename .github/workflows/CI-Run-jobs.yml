@@ -41,15 +41,6 @@ jobs:
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
 
-      - name: Debug exec file locations
-        run: |
-          echo "=== All .exec files ==="
-          find . -name "*.exec" 2>/dev/null || echo "No .exec files found"
-          echo "=== All .ec files ==="
-          find . -name "*.ec" 2>/dev/null || echo "No .ec files found"
-          echo "=== build/jacoco contents ==="
-          find . -path "*/build/jacoco*" 2>/dev/null || echo "No jacoco dir found"
-
       - name: Upload unit test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -61,8 +52,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: unit-test-exec
-          path: '**/build/jacoco/*.exec'
-          if-no-files-found: warn
+          path: '**/build/outputs/unit_test_code_coverage/**/*.exec'
+          if-no-files-found: error
 
   instrumented-tests:
     runs-on: ubuntu-latest
@@ -156,18 +147,17 @@ jobs:
         run: echo "$APIKEY_PROPERTIES_CONTENT" > apikey.properties
 
       - name: Download unit test exec files
-        continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: unit-test-exec
-          path: .
+          path: app/build/outputs/unit_test_code_coverage/debugUnitTest/
 
       - name: Download instrumented test exec files
         continue-on-error: true
         uses: actions/download-artifact@v4
         with:
           name: instrumented-test-exec
-          path: .
+          path: app/build/outputs/code_coverage/
 
       - name: Generate merged coverage report
         run: ./gradlew jacocoTestReportAll
