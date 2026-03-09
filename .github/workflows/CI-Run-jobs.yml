@@ -151,7 +151,7 @@ jobs:
           path: .
 
       - name: Generate merged coverage report
-        run: ./gradlew jacocoTestReportAll
+        run: ./gradlew jacocoTestReportAll --info 2>&1 | tee gradle-jacoco.log | grep -E "exec|\.ec|executionData|Skipping|UP-TO-DATE|No source|jacocoTestReportAll"
 
       - name: Debug coverage files
         run: |
@@ -159,8 +159,10 @@ jobs:
           find . -name "*.exec" -o -name "*.ec" | grep -v build/tmp
           echo "=== Coverage report location ==="
           find . -name "jacocoTestReportAll.xml"
-          echo "=== Coverage XML content (counters only) ==="
+          echo "=== Coverage XML counters ==="
           grep -o 'type="[^"]*" missed="[^"]*" covered="[^"]*"' build/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml || echo "No counters found in XML"
+          echo "=== Full Gradle jacoco log ==="
+          cat gradle-jacoco.log | grep -E "exec|\.ec|execution|input|file" | head -50
 
       - name: Check overall coverage threshold
         run: |
