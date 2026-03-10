@@ -39,7 +39,7 @@ jobs:
         run: echo "$APIKEY_PROPERTIES_CONTENT" > apikey.properties
 
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
+        run: ./gradlew testDebugUnitTest -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
 
       - name: Upload unit test results
         if: always()
@@ -92,7 +92,7 @@ jobs:
         with:
           api-level: 30
           arch: x86_64
-          script: ./gradlew connectedDebugAndroidTest
+          script: ./gradlew connectedDebugAndroidTest -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_17_X64
 
       - name: Upload instrumented test results
         if: always()
@@ -154,7 +154,7 @@ jobs:
         run: ./gradlew compileDebugKotlin -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
 
       - name: Generate merged coverage report
-        run: ./gradlew jacocoTestReportAll
+        run: ./gradlew jacocoTestReportAll -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
 
       - name: Check overall coverage threshold
         run: |
@@ -220,7 +220,7 @@ jobs:
         run: echo "$APIKEY_PROPERTIES_CONTENT" > apikey.properties
 
       - name: Build Release APK
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleRelease -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_17_X64
 
       - name: Deploy to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@bd494989dd4bec0343f78adee87fe66e48279ad6  # v1
