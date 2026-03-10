@@ -186,25 +186,12 @@ jobs:
           fi
 
       - name: Analyze with SonarCloud
-        uses: sonarsource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602  # v6.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: "https://sonarcloud.io"
-        with:
-          args: >
-            -Dsonar.projectKey=MGAxiom_Eventorias-OC-15
-            -Dsonar.organization=mgaxiom
-            -Dsonar.qualitygate.wait=true
-            -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml
-            -Dsonar.coverage.exclusions=**/EventFilterProcessor.kt
-            -Dsonar.branch.name=${{ steps.branch.outputs.name }}
-
-      - name: Check Quality Gate
-        uses: sonarsource/sonarqube-quality-gate-action@d304d050d930b02a896b0f85935344f023928496  # v1.1.0
+        run: ./gradlew sonar
+          -Dsonar.branch.name=${{ steps.branch.outputs.name }}
+          -Dsonar.qualitygate.wait=true
+          -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: "https://sonarcloud.io"
 
   deploy:
     runs-on: ubuntu-latest

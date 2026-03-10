@@ -6,11 +6,24 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
+    id("org.sonarqube") version "7.2.3.7755"
     id("jacoco")
 }
 
 jacoco {
     toolVersion = "0.8.12"
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "MGAxiom_Eventorias-OC-15")
+        property("sonar.organization", "mgaxiom")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths",
+            "${rootProject.buildDir}/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml")
+        property("sonar.coverage.exclusions", "**/EventFilterProcessor.kt")
+        property("sonar.exclusions", "**/R.class,**/R\$*.class,**/BuildConfig.*,**/Manifest*.*")
+    }
 }
 
 val androidSubprojects = subprojects.filter {
@@ -68,7 +81,6 @@ tasks.register<org.gradle.testing.jacoco.tasks.JacocoReport>("jacocoTestReportAl
     })
     classDirectories.setFrom(classDirs)
 
-
     val executionDataFiles = files(androidSubprojects.map { project ->
         project.fileTree("build") {
             include(
@@ -100,7 +112,10 @@ tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerificationAll") 
 
     val executionDataFiles = files(androidSubprojects.map { project ->
         project.fileTree("build") {
-            include("outputs/unit_test_code_coverage/debugUnitTest/*.exec")
+            include(
+                "outputs/unit_test_code_coverage/debugUnitTest/*.exec",
+                "outputs/code_coverage/debugAndroidTest/connected/**/*.ec"
+            )
         }
     })
     executionData.setFrom(executionDataFiles)
