@@ -23,6 +23,7 @@ sonar {
             "${rootProject.buildDir}/reports/jacoco/jacocoTestReportAll/jacocoTestReportAll.xml")
         property("sonar.coverage.exclusions", "**/EventFilterProcessor.kt")
         property("sonar.exclusions", "**/R.class,**/R\$*.class,**/BuildConfig.*,**/Manifest*.*")
+        property("sonar.androidLint.reportPaths", "")
     }
 }
 
