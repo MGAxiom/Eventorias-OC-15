@@ -63,6 +63,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 
     sourceDirectories.setFrom(sourceDirs)
 
+    //Used to make it work with Jacoco 0.8.12
     executionData.setFrom(
         fileTree(buildDir) {
             include("outputs/unit_test_code_coverage/debugUnitTest/*.exec")
