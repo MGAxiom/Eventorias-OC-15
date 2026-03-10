@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep all domain module classes
+-keep class com.example.domain.** { *; }
+-keep interface com.example.domain.** { *; }
