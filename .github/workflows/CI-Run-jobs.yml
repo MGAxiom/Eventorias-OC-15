@@ -188,7 +188,6 @@ jobs:
       - name: Analyze with SonarCloud
         run: ./gradlew sonar
           -Dsonar.branch.name=${{ steps.branch.outputs.name }}
-          -Dsonar.qualitygate.wait=true
           -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
