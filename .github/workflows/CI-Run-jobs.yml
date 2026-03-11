@@ -39,7 +39,7 @@ jobs:
         run: echo "$APIKEY_PROPERTIES_CONTENT" > apikey.properties
 
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
+        run: ./gradlew testDebugUnitTest
 
       - name: Upload unit test results
         if: always()
@@ -92,7 +92,7 @@ jobs:
         with:
           api-level: 30
           arch: x86_64
-          script: ./gradlew connectedDebugAndroidTest -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_17_X64
+          script: ./gradlew connectedDebugAndroidTest
 
       - name: Upload instrumented test results
         if: always()
@@ -151,10 +151,10 @@ jobs:
           path: .
 
       - name: Compile debug sources for coverage mapping
-        run: ./gradlew compileDebugKotlin -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
+        run: ./gradlew compileDebugKotlin
 
       - name: Generate merged coverage report
-        run: ./gradlew jacocoTestReportAll -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
+        run: ./gradlew jacocoTestReportAll
 
       - name: Check overall coverage threshold
         run: |
@@ -188,7 +188,6 @@ jobs:
       - name: Analyze with SonarCloud
         run: ./gradlew sonar
           -Dsonar.branch.name=${{ steps.branch.outputs.name }}
-          -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
@@ -219,7 +218,7 @@ jobs:
         run: echo "$APIKEY_PROPERTIES_CONTENT" > apikey.properties
 
       - name: Build Release APK
-        run: ./gradlew assembleRelease -Dorg.gradle.java.installations.fromEnv=JAVA_HOME_17_X64
+        run: ./gradlew assembleRelease
 
       - name: Deploy to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@bd494989dd4bec0343f78adee87fe66e48279ad6  # v1
