@@ -11,13 +11,14 @@ android {
         minSdk = 30
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
         debug {
         }
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
         }
     }
 
