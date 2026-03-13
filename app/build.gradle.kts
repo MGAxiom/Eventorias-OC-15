@@ -32,6 +32,18 @@ android {
         buildConfigField("String", "GOOGLE_API_KEY", "\"$googleApiKey\"")
     }
 
+    signingConfigs {
+        create("release") {
+            val keystoreFile = rootProject.file("eventorias-release.jks")
+            if (keystoreFile.exists()) {
+                storeFile = keystoreFile
+                storePassword = System.getenv("STORE_PASSWORD") ?: ""
+                keyAlias = System.getenv("KEY_ALIAS") ?: ""
+                keyPassword = System.getenv("KEY_PASSWORD") ?: ""
+            }
+        }
+    }
+
     buildTypes {
         debug {
             enableAndroidTestCoverage = true
@@ -39,6 +51,7 @@ android {
         }
         release {
             isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

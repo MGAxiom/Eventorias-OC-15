@@ -217,8 +217,15 @@ jobs:
           APIKEY_PROPERTIES_CONTENT: ${{ secrets.APIKEY_PROPERTIES }}
         run: echo "$APIKEY_PROPERTIES_CONTENT" > apikey.properties
 
+      - name: Decode keystore
+        run: echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > eventorias-release.jks
+
       - name: Build Release APK
         run: ./gradlew assembleRelease
+        env:
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
       - name: Deploy to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@bd494989dd4bec0343f78adee87fe66e48279ad6  # v1
